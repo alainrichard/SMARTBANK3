@@ -36,7 +36,7 @@ export default function AuditPage() {
     setFiltered(f);
   }, [search, actionFilter, logs]);
 
-  const uniqueActions = [...new Set(logs.map((l:any) => l.action).filter(Boolean))].sort();
+  const uniqueActions = Array.from(new Set(logs.map((l:any) => l.action).filter(Boolean))).sort();
 
   if (loading) return <div className="space-y-3">{[...Array(8)].map((_,i)=><div key={i} className="skeleton h-12 rounded-xl"/>)}</div>;
 
