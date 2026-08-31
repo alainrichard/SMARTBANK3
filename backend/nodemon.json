@@ -1,0 +1,1 @@
+{"watch":["."],"ext":"js,mjs,cjs,json","ignore":["node_modules","../ai/models","../ai/models/**"]}

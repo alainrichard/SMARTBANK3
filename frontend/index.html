@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartBank AI — Intelligent Digital Banking</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0f1e;--ink2:#3d4a6b;--ink3:#7b88a8;--ink4:#b0bbd0;
+  --sur:#f4f6fb;--sur2:#ffffff;--sur3:#eef1f8;
+  --bdr:#dde2ef;--bdr2:#c8d0e4;
+  --gold:#c9a84c;--gold2:#f0c96e;--gold3:#fff8e1;
+  --teal:#0d9488;--teal2:#14b8a6;--teal3:#d1faf5;
+  --red:#dc2626;--red2:#ef4444;--red3:#fee2e2;
+  --blue:#3b5bdb;--blue2:#4c6ef5;--blue3:#dbe4ff;
+  --amber:#d97706;--amber3:#fef3c7;
+  --r:10px;--rl:16px;--rxl:22px;
+  --sh:0 1px 3px rgba(10,15,30,.07),0 4px 16px rgba(10,15,30,.06);
+  --shl:0 8px 32px rgba(10,15,30,.14);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--sur);color:var(--ink);font-size:14px;line-height:1.5}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;letter-spacing:-.02em}
+.mono{font-family:'JetBrains Mono',monospace}
+input,select,textarea{font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:var(--r);background:var(--sur2);color:var(--ink);width:100%;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,91,219,.1)}
+input::placeholder{color:var(--ink4)}
+button{font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;border-radius:var(--r);border:1.5px solid var(--bdr);background:var(--sur2);color:var(--ink);padding:9px 18px;transition:all .15s;font-weight:500}
+button:hover{background:var(--sur3)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.btn{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+.btn:hover:not(:disabled){background:#1a2440}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--ink);border-color:transparent;font-weight:700}
+.btn-outline{background:transparent;border-color:var(--blue);color:var(--blue)}
+.btn-outline:hover:not(:disabled){background:var(--blue3)}
+.btn-danger{background:var(--red);border-color:var(--red);color:#fff}
+.btn-danger:hover:not(:disabled){background:#b91c1c}
+.btn-success{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn-success:hover:not(:disabled){background:#0f766e}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--blue);padding:6px 10px}
+.btn-ghost:hover{background:var(--blue3)}
+.card{background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.25rem;box-shadow:var(--sh)}
+.scard{background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.2rem 1.4rem;box-shadow:var(--sh);position:relative;overflow:hidden}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;gap:3px;letter-spacing:.02em}
+.bg{background:#dcfce7;color:#15803d}.br{background:var(--red3);color:#991b1b}.ba{background:var(--amber3);color:#92400e}
+.bb{background:var(--blue3);color:#1e3a8a}.bp{background:#ede9fe;color:#5b21b6}.bgr{background:var(--sur3);color:var(--ink2)}
+.bgo{background:var(--gold3);color:#78350f}.bt{background:var(--teal3);color:#134e4a}
+.sidebar{width:244px;background:var(--ink);min-height:100vh;position:fixed;top:0;left:0;overflow-y:auto;display:flex;flex-direction:column;z-index:20;box-shadow:4px 0 24px rgba(10,15,30,.2)}
+.main{margin-left:244px;min-height:100vh;padding:2rem 2.5rem}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 14px;color:rgba(255,255,255,.5);border-radius:10px;margin:1px 10px;cursor:pointer;font-size:13.5px;transition:all .15s;font-weight:500;border:1px solid transparent}
+.nav-link:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.8)}
+.nav-link.active{background:rgba(201,168,76,.13);color:var(--gold2);border-color:rgba(201,168,76,.22)}
+.nav-link .icon{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.nav-sec{font-size:10px;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.1em;padding:14px 24px 5px}
+table{width:100%;border-collapse:collapse}
+th{padding:9px 14px;text-align:left;font-size:10.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1.5px solid var(--bdr);font-family:'Syne',sans-serif}
+td{padding:12px 14px;border-bottom:1px solid rgba(221,226,239,.5);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(244,246,251,.6)}
+.alert{padding:11px 16px;border-radius:var(--r);font-size:13px;margin-bottom:10px;border:1px solid}
+.ar{background:#fff5f5;color:#c0392b;border-color:#fecaca}
+.ag{background:#f0fdf4;color:#166534;border-color:#bbf7d0}
+.aa{background:#fffbeb;color:#92400e;border-color:#fde68a}
+.ab{background:#eff6ff;color:#1e40af;border-color:#bfdbfe}
+.modal-wrap{position:fixed;inset:0;background:rgba(10,15,30,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem;backdrop-filter:blur(4px)}
+.modal{background:var(--sur2);border-radius:var(--rxl);padding:2rem;width:100%;max-width:480px;border:1px solid var(--bdr);max-height:92vh;overflow-y:auto;box-shadow:var(--shl)}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:5px;letter-spacing:.02em;font-family:'Syne',sans-serif}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.25rem}
+.pbar{height:5px;background:var(--sur3);border-radius:3px;overflow:hidden}
+.pval{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.cmsg{background:var(--ink);color:#fff;border-radius:18px 18px 4px 18px;padding:11px 16px;font-size:13px;align-self:flex-end;max-width:78%;line-height:1.55}
+.bmsg{background:var(--sur3);color:var(--ink);border-radius:18px 18px 18px 4px;padding:11px 16px;font-size:13px;align-self:flex-start;max-width:78%;line-height:1.55}
+.dots{display:flex;gap:4px;align-items:center;padding:4px 0}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--ink3);display:inline-block;animation:db 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes db{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.spin{width:18px;height:18px;border:2px solid rgba(59,91,219,.2);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fu .32s ease both}
+#screen-landing{display:flex;min-height:100vh;background:linear-gradient(135deg,#0a0f1e 0%,#162040 45%,#0d1f3c 100%)}
+#screen-app{display:none}
+#toast{display:none;position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:500;min-width:240px;box-shadow:var(--shl)}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid var(--bdr)}
+hr{border:none;border-top:1px solid var(--bdr);margin:1rem 0}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--bdr)}
+.sr:last-child{border-bottom:none}
+.tgl{position:relative;display:inline-block;width:42px;height:24px}
+.tgl input{opacity:0;width:0;height:0}
+.sldr{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--bdr2);transition:.3s;border-radius:24px}
+.sldr:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;transition:.3s;border-radius:50%}
+input:checked+.sldr{background:var(--teal)}
+input:checked+.sldr:before{transform:translateX(18px)}
+.tabs{display:flex;gap:4px;background:var(--sur3);border-radius:12px;padding:4px;margin-bottom:1.5rem}
+.tab{flex:1;padding:8px 16px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink3);transition:all .2s;text-align:center}
+.tab.active{background:var(--sur2);color:var(--ink);box-shadow:var(--sh)}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.metric{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--sur3);border-radius:20px;font-size:12px;color:var(--ink2)}
+.rstat{text-align:center;padding:1.2rem;background:var(--sur3);border-radius:12px}
+.rstat .v{font-size:28px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.03em}
+.rstat .l{font-size:11px;color:var(--ink3);margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.ndot{width:8px;height:8px;background:var(--red);border-radius:50%;display:inline-block;margin-left:4px;flex-shrink:0}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:10px}
+</style>
+</head>
+<body>
+
+<!-- ═══ LANDING ═════════════════════════════════════════════════ -->
+<div id="screen-landing">
+  <!-- Left hero -->
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 4.5rem;max-width:560px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:2.5rem">
+      <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--ink)">S</div>
+      <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:-.01em">SmartBank AI</span>
+    </div>
+    <h1 style="font-size:46px;font-weight:800;color:#fff;line-height:1.08;letter-spacing:-.04em;margin-bottom:1.2rem">Intelligent<br><span style="color:var(--gold2)">Digital Banking</span><br>for Rwanda</h1>
+    <p style="color:rgba(255,255,255,.5);font-size:15px;line-height:1.7;margin-bottom:2.5rem;max-width:380px">AI-powered fraud detection, smart credit scoring, real-time analytics — all in one secure platform.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 16px">
+        <div style="font-size:22px;margin-bottom:7px">🛡️</div>
+        <p style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:3px">AI Fraud Detection</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.35)">Real-time ML protection</p>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 16px">
+        <div style="font-size:22px;margin-bottom:7px">📊</div>
+        <p style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:3px">Credit Scoring</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.35)">Smart loan eligibility</p>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 16px">
+        <div style="font-size:22px;margin-bottom:7px">💬</div>
+        <p style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:3px">24/7 Support Chat</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.35)">AI-powered assistant</p>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 16px">
+        <div style="font-size:22px;margin-bottom:7px">📧</div>
+        <p style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:3px">Email Alerts</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.35)">Every action notified</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right auth panel -->
+  <div style="width:470px;background:var(--sur2);display:flex;flex-direction:column;justify-content:center;padding:3rem;overflow-y:auto">
+    <!-- Tabs -->
+    <div style="display:flex;background:var(--sur3);border-radius:12px;padding:4px;margin-bottom:1.75rem">
+      <button id="tab-login" class="tab active" onclick="switchTab('login')">Sign In</button>
+      <button id="tab-reg" class="tab" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <h2 style="font-size:21px;margin-bottom:5px">Welcome back</h2>
+      <p style="color:var(--ink3);font-size:13px;margin-bottom:1.25rem">Sign in to your SmartBank account</p>
+      <p style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Quick demo access</p>
+      <div id="role-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1.25rem"></div>
+      <hr style="margin-bottom:1.25rem">
+      <div class="fg"><label class="fl">Email Address</label><input id="l-email" type="email" placeholder="you@example.com"/></div>
+      <div class="fg">
+        <label class="fl">Password</label>
+        <div style="position:relative">
+          <input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:42px"/>
+          <button onclick="togglePass('l-pass',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:none;padding:4px;color:var(--ink3);font-size:15px">👁</button>
+        </div>
+      </div>
+      <div id="l-2fa" style="display:none;margin-bottom:10px">
+        <label class="fl">2FA Code (authenticator app)</label>
+        <input id="l-otp" type="text" placeholder="000000" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:10px;font-family:'JetBrains Mono',monospace"/>
+      </div>
+      <div id="l-err" class="alert ar" style="display:none"></div>
+      <button class="btn" onclick="doLogin()" style="width:100%;padding:12px;font-size:15px;margin-bottom:10px" id="l-btn">Sign In →</button>
+      <p style="text-align:center;font-size:12px;color:var(--ink3)">Forgot password? <a onclick="showForgot()" href="#" style="color:var(--blue)">Reset it</a></p>
+      <p style="text-align:center;font-size:11px;color:var(--ink4);margin-top:6px">Admin: <code>Admin@123456</code> · Others: <code>Staff@123456</code></p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="form-reg" style="display:none">
+      <h2 style="font-size:21px;margin-bottom:5px">Open your account</h2>
+      <p style="color:var(--ink3);font-size:13px;margin-bottom:1.25rem">Free savings account — ready in minutes. A welcome email will be sent.</p>
+      <div class="fr">
+        <div class="fg"><label class="fl">First Name *</label><input id="r-first" placeholder="Jean"/></div>
+        <div class="fg"><label class="fl">Last Name *</label><input id="r-last" placeholder="Habimana"/></div>
+      </div>
+      <div class="fg"><label class="fl">Email Address *</label><input id="r-email" type="email" placeholder="you@example.com"/></div>
+      <div class="fg"><label class="fl">Phone Number</label><input id="r-phone" placeholder="+250788000000"/></div>
+      <div class="fg"><label class="fl">National ID</label><input id="r-nid" placeholder="1199000000000001"/></div>
+      <div class="fg">
+        <label class="fl">Password * <span style="color:var(--ink4);font-weight:400">(min 8 chars)</span></label>
+        <div style="position:relative">
+          <input id="r-pass" type="password" placeholder="Create a strong password" style="padding-right:42px"/>
+          <button onclick="togglePass('r-pass',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:none;padding:4px;color:var(--ink3);font-size:15px">👁</button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Date of Birth</label><input id="r-dob" type="date"/></div>
+      <div id="r-err" class="alert ar" style="display:none"></div>
+      <div id="r-ok" class="alert ag" style="display:none"></div>
+      <button class="btn" onclick="doRegister()" style="width:100%;padding:12px;font-size:15px" id="r-btn">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP SHELL ════════════════════════════════════════════════ -->
+<div id="screen-app">
+  <div class="sidebar">
+    <div style="padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--ink)">S</div>
+        <div>
+          <p style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;line-height:1">SmartBank AI</p>
+          <p style="font-size:10px;color:var(--gold);opacity:.8;letter-spacing:.03em">DIGITAL BANKING</p>
+        </div>
+      </div>
+    </div>
+    <div id="sb-nav" style="flex:1;padding:8px 0;overflow-y:auto"></div>
+    <div style="padding:10px;border-top:1px solid rgba(255,255,255,.07)">
+      <div id="user-chip" style="background:rgba(255,255,255,.05);border-radius:12px;padding:10px 12px;margin-bottom:6px;cursor:pointer" onclick="navTo('settings')"></div>
+      <button onclick="logout()" style="width:100%;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.18);color:#fca5a5;border-radius:10px;padding:8px;font-size:13px;font-weight:500">← Sign Out</button>
+    </div>
+  </div>
+  <div class="main">
+    <div id="toast"></div>
+    <div id="page-content" class="fu"></div>
+  </div>
+</div>
+
+<!-- ═══ FORGOT PASSWORD MODAL ════════════════════════════════════ -->
+<div class="modal-wrap" id="modal-forgot" style="display:none">
+  <div class="modal" style="max-width:420px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <div><h2 style="font-size:18px">Reset Password</h2><p style="font-size:13px;color:var(--ink3)">Enter your email to receive an OTP</p></div>
+      <button onclick="document.getElementById('modal-forgot').style.display='none'" style="border:none;background:none;font-size:24px;color:var(--ink3)">×</button>
+    </div>
+    <div id="fp-s1">
+      <div class="fg"><label class="fl">Email Address</label><input id="fp-email" type="email" placeholder="you@example.com"/></div>
+      <div id="fp-a1" class="alert ar" style="display:none"></div>
+      <button class="btn" onclick="sendOTP()" style="width:100%" id="fp-b1">Send OTP to Email →</button>
+    </div>
+    <div id="fp-s2" style="display:none">
+      <div class="alert ag" style="margin-bottom:1rem">✓ OTP sent! Check your email inbox (and spam folder).</div>
+      <div class="fg"><label class="fl">OTP Code</label><input id="fp-otp" placeholder="6-digit code" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:10px;font-family:'JetBrains Mono',monospace"/></div>
+      <div class="fg"><label class="fl">New Password</label><input id="fp-np" type="password" placeholder="Min 8 characters"/></div>
+      <div id="fp-a2" class="alert ar" style="display:none"></div>
+      <button class="btn" onclick="resetPass()" style="width:100%" id="fp-b2">Reset Password →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='http://localhost:5000/api';
+let ST={user:null,tokens:null,page:null};
+const RL={super_admin:{l:'Super Admin',c:'#c9a84c'},branch_manager:{l:'Branch Manager',c:'#a855f7'},fraud_analyst:{l:'Fraud Analyst',c:'#ef4444'},bank_staff:{l:'Bank Teller',c:'#10b981'},auditor:{l:'Auditor',c:'#06b6d4'},customer:{l:'Customer',c:'#3b5bdb'}};
+const DM=[{r:'customer',e:'jean@example.com',p:'Staff@123456'},{r:'branch_manager',e:'manager@smartbank.rw',p:'Staff@123456'},{r:'fraud_analyst',e:'analyst@smartbank.rw',p:'Staff@123456'},{r:'bank_staff',e:'teller@smartbank.rw',p:'Staff@123456'},{r:'auditor',e:'auditor@smartbank.rw',p:'Staff@123456'},{r:'super_admin',e:'admin@smartbank.rw',p:'Admin@123456'}];
+const NAV={
+  customer:[{p:'dashboard',i:'⬛',l:'Dashboard'},{p:'transfer',i:'➤',l:'Send Money'},{p:'transactions',i:'≡',l:'Transactions'},{p:'loans',i:'◆',l:'Loans'},{p:'bills',i:'◉',l:'Pay Bills'},{p:'analytics',i:'◕',l:'Analytics'},{p:'support',i:'💬',l:'Support Chat'},{p:'notifications',i:'✉',l:'Notifications'},{p:'reports',i:'📋',l:'Reports'},{p:'settings',i:'⚙',l:'Settings'}],
+  bank_staff:[{p:'dashboard',i:'⬛',l:'Dashboard'},{p:'deposit',i:'+',l:'Process Deposit'},{p:'transactions',i:'≡',l:'Transactions'},{p:'customers',i:'♠',l:'Customers'},{p:'notifications',i:'✉',l:'Notifications'},{p:'reports',i:'📋',l:'Reports'},{p:'settings',i:'⚙',l:'Settings'}],
+  branch_manager:[{p:'admin',i:'⬛',l:'Dashboard'},{p:'transactions',i:'≡',l:'Transactions'},{p:'customers',i:'♠',l:'Users & Staff'},{p:'loans-admin',i:'◆',l:'Loans'},{p:'fraud',i:'⚠',l:'Fraud Center'},{p:'branches',i:'⊞',l:'Branches'},{p:'notifications',i:'✉',l:'Notifications'},{p:'reports',i:'📋',l:'Reports'},{p:'settings',i:'⚙',l:'Settings'}],
+  fraud_analyst:[{p:'admin',i:'⬛',l:'Dashboard'},{p:'fraud',i:'⚠',l:'Fraud Center'},{p:'transactions',i:'≡',l:'Transactions'},{p:'notifications',i:'✉',l:'Notifications'},{p:'reports',i:'📋',l:'Reports'},{p:'settings',i:'⚙',l:'Settings'}],
+  auditor:[{p:'admin',i:'⬛',l:'Dashboard'},{p:'transactions',i:'≡',l:'Transactions'},{p:'audit',i:'≡',l:'Audit Logs'},{p:'notifications',i:'✉',l:'Notifications'},{p:'reports',i:'📋',l:'Reports'},{p:'settings',i:'⚙',l:'Settings'}],
+  super_admin:[{p:'admin',i:'⬛',l:'Dashboard'},{p:'transactions',i:'≡',l:'All Transactions'},{p:'customers',i:'♠',l:'Users & Staff'},{p:'loans-admin',i:'◆',l:'Loans'},{p:'fraud',i:'⚠',l:'Fraud Center'},{p:'branches',i:'⊞',l:'Branches'},{p:'audit',i:'≡',l:'Audit Logs'},{p:'notifications',i:'✉',l:'Notifications'},{p:'reports',i:'📋',l:'Reports'},{p:'settings',i:'⚙',l:'Settings'}],
+};
+
+async function api(m,path,b,auth=true){
+  const h={'Content-Type':'application/json'};
+  if(auth&&ST.tokens?.accessToken)h['Authorization']='Bearer '+ST.tokens.accessToken;
+  const r=await fetch(API+path,{method:m,headers:h,body:b?JSON.stringify(b):undefined}).catch(()=>null);
+  if(!r)return null;
+  if(r.status===401&&auth&&ST.tokens?.refreshToken){
+    try{const rr=await fetch(API+'/auth/refresh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refreshToken:ST.tokens.refreshToken})});
+    if(rr.ok){const rd=await rr.json();ST.tokens={...ST.tokens,...rd.data};localStorage.setItem('sb_t',JSON.stringify(ST.tokens));h['Authorization']='Bearer '+ST.tokens.accessToken;const r2=await fetch(API+path,{method:m,headers:h,body:b?JSON.stringify(b):undefined});return r2.json().catch(()=>null);}}catch{}
+    logout();return null;
+  }
+  return r.json().catch(()=>({success:false,message:'Server error'}));
+}
+
+let _tt;
+function toast(msg,t='success'){
+  const el=document.getElementById('toast');
+  const c={success:['#f0fdf4','#166534','#bbf7d0'],error:['#fff5f5','#991b1b','#fecaca'],warning:['#fffbeb','#92400e','#fde68a'],info:['#eff6ff','#1e40af','#bfdbfe']}[t]||['#eff6ff','#1e40af','#bfdbfe'];
+  el.style.cssText=`display:block;background:${c[0]};color:${c[1]};border:1px solid ${c[2]};position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:500;min-width:240px;box-shadow:0 8px 32px rgba(10,15,30,.18)`;
+  el.textContent=msg;clearTimeout(_tt);_tt=setTimeout(()=>el.style.display='none',4000);
+}
+function fmt(n){return Number(n||0).toLocaleString('en-RW');}
+function togglePass(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
+function switchTab(t){
+  document.getElementById('form-login').style.display=t==='login'?'block':'none';
+  document.getElementById('form-reg').style.display=t==='register'?'block':'none';
+  document.getElementById('tab-login').className='tab'+(t==='login'?' active':'');
+  document.getElementById('tab-reg').className='tab'+(t==='register'?' active':'');
+}
+function showForgot(){document.getElementById('modal-forgot').style.display='flex';}
+
+(function init(){
+  const g=document.getElementById('role-grid');
+  DM.forEach(d=>{
+    const r=RL[d.r];const el=document.createElement('div');
+    el.style.cssText='border:1.5px solid var(--bdr);border-radius:10px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s';
+    el.innerHTML=`<div style="width:28px;height:28px;border-radius:50%;background:${r.c}22;color:${r.c};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${r.l[0]}</div><div><p style="font-size:12px;font-weight:600;color:var(--ink);line-height:1.2">${r.l}</p><p style="font-size:10px;color:var(--ink4)">${d.e.split('@')[0]}</p></div>`;
+    el.onmouseover=()=>{el.style.borderColor=r.c;el.style.background=r.c+'11';};
+    el.onmouseout=()=>{el.style.borderColor='var(--bdr)';el.style.background='';};
+    el.onclick=()=>{document.getElementById('l-email').value=d.e;document.getElementById('l-pass').value=d.p;doLogin();};
+    g.appendChild(el);
+  });
+  const s=localStorage.getItem('sb_t');
+  if(s){ST.tokens=JSON.parse(s);api('GET','/profile').then(d=>{if(d?.success){ST.user=d.data.user;launchApp();}else localStorage.removeItem('sb_t');});}
+})();
+
+async function sendOTP(){
+  const email=document.getElementById('fp-email').value.trim(),alertEl=document.getElementById('fp-a1'),btn=document.getElementById('fp-b1');
+  if(!email){alertEl.textContent='Enter your email';alertEl.style.display='block';return;}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>';
+  const d=await api('POST','/auth/forgot-password',{email},false);
+  btn.disabled=false;btn.textContent='Send OTP to Email →';
+  if(d?.success){document.getElementById('fp-s1').style.display='none';document.getElementById('fp-s2').style.display='block';}
+  else{alertEl.textContent=d?.message||'Failed';alertEl.style.display='block';}
+}
+async function resetPass(){
+  const email=document.getElementById('fp-email').value.trim(),otp=document.getElementById('fp-otp').value.trim(),pass=document.getElementById('fp-np').value;
+  const alertEl=document.getElementById('fp-a2'),btn=document.getElementById('fp-b2');
+  if(!otp||!pass){alertEl.textContent='Enter OTP and new password';alertEl.style.display='block';return;}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>';
+  const d=await api('POST','/auth/reset-password',{email,otp,new_password:pass},false);
+  btn.disabled=false;btn.textContent='Reset Password →';
+  if(d?.success){document.getElementById('modal-forgot').style.display='none';toast('Password reset! Please sign in.');document.getElementById('fp-s1').style.display='block';document.getElementById('fp-s2').style.display='none';document.getElementById('fp-otp').value='';document.getElementById('fp-np').value='';}
+  else{alertEl.textContent=d?.message||'Invalid OTP';alertEl.style.display='block';}
+}
+
+async function doLogin(){
+  const email=document.getElementById('l-email').value.trim(),pass=document.getElementById('l-pass').value,otp=document.getElementById('l-otp').value.trim();
+  const errEl=document.getElementById('l-err'),btn=document.getElementById('l-btn');
+  errEl.style.display='none';
+  if(!email||!pass){errEl.textContent='Email and password required';errEl.style.display='block';return;}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Signing in...';
+  const body={email,password:pass};if(otp)body.otp_code=otp;
+  const d=await api('POST','/auth/login',body,false);
+  btn.disabled=false;btn.textContent='Sign In →';
+  if(!d){errEl.textContent='Cannot connect to server. Is the backend running on port 5000?';errEl.style.display='block';return;}
+  if(!d.success){errEl.textContent=d.message;errEl.style.display='block';return;}
+  if(d.data?.requires_2fa){document.getElementById('l-2fa').style.display='block';errEl.className='alert ab';errEl.textContent='2FA required — enter code from your authenticator app';errEl.style.display='block';return;}
+  ST.tokens={accessToken:d.data.accessToken,refreshToken:d.data.refreshToken};ST.user=d.data.user;
+  localStorage.setItem('sb_t',JSON.stringify(ST.tokens));launchApp();
+}
+
+async function doRegister(){
+  const first=document.getElementById('r-first').value.trim(),last=document.getElementById('r-last').value.trim(),email=document.getElementById('r-email').value.trim(),pass=document.getElementById('r-pass').value;
+  const errEl=document.getElementById('r-err'),okEl=document.getElementById('r-ok'),btn=document.getElementById('r-btn');
+  errEl.style.display='none';okEl.style.display='none';
+  if(!first||!last||!email||!pass){errEl.textContent='First name, last name, email and password required';errEl.style.display='block';return;}
+  if(pass.length<8){errEl.textContent='Password must be at least 8 characters';errEl.style.display='block';return;}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Creating account...';
+  const d=await api('POST','/auth/register',{first_name:first,last_name:last,email,phone:document.getElementById('r-phone').value,password:pass,national_id:document.getElementById('r-nid').value,date_of_birth:document.getElementById('r-dob').value},false);
+  btn.disabled=false;btn.textContent='Create Account →';
+  if(!d?.success){errEl.textContent=d?.message||'Registration failed';errEl.style.display='block';return;}
+  okEl.innerHTML='✓ Account created! Welcome email sent. <a onclick="switchTab(\'login\')" href="#" style="color:var(--teal);font-weight:600">Sign in →</a>';okEl.style.display='block';
+  document.getElementById('l-email').value=email;document.getElementById('l-pass').value=pass;
+}
+
+function logout(){api('POST','/auth/logout');ST={user:null,tokens:null,page:null};localStorage.removeItem('sb_t');document.getElementById('screen-app').style.display='none';document.getElementById('screen-landing').style.display='flex';}
+
+function launchApp(){
+  document.getElementById('screen-landing').style.display='none';document.getElementById('screen-app').style.display='block';
+  buildSidebar();navTo((NAV[ST.user?.role]||[])[0]?.p||'dashboard');
+  pollNotifs();
+}
+
+function buildSidebar(){
+  const nav=document.getElementById('sb-nav');nav.innerHTML='';
+  const items=NAV[ST.user?.role]||[];
+  items.forEach(item=>{
+    const el=document.createElement('div');el.className='nav-link';el.id='nav-'+item.p;
+    el.innerHTML=`<span class="icon">${item.i}</span><span style="flex:1">${item.l}</span>${item.p==='notifications'?'<span id="nav-ndot" style="display:none" class="ndot"></span>':''}`;
+    el.onclick=()=>navTo(item.p);nav.appendChild(el);
+  });
+  const r=RL[ST.user?.role]||RL.customer;
+  const ini=(ST.user?.first_name?.[0]||'')+(ST.user?.last_name?.[0]||'');
+  document.getElementById('user-chip').innerHTML=`<div style="display:flex;align-items:center;gap:9px">
+    <div style="width:32px;height:32px;border-radius:50%;background:${r.c}33;color:${r.c};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${ini}</div>
+    <div style="overflow:hidden"><p style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ST.user?.first_name} ${ST.user?.last_name}</p><p style="font-size:10.5px;color:${r.c}">${r.l}</p></div>
+  </div>`;
+}
+
+function navTo(page){
+  ST.page=page;document.querySelectorAll('.nav-link').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('nav-'+page);if(el)el.classList.add('active');
+  const pc=document.getElementById('page-content');pc.className='';void pc.offsetWidth;pc.className='fu';
+  (PG[page]||function(){setC(`<div class="topbar"><h1>${page}</h1></div><div class="card"><p style="color:var(--ink3)">Coming soon.</p></div>`);})();
+}
+function setC(html){document.getElementById('page-content').innerHTML=html;}
+function load(m='Loading...'){setC(`<div style="padding:4rem;text-align:center;color:var(--ink3)"><span class="spin"></span> <span style="margin-left:8px">${m}</span></div>`);}
+
+async function pollNotifs(){
+  const d=await api('GET','/notifications');
+  const u=(d?.data?.notifications||[]).filter(n=>!n.is_read).length;
+  const dot=document.getElementById('nav-ndot');if(dot)dot.style.display=u>0?'inline-block':'none';
+}
+
+const PG={};
+
+// ── CUSTOMER DASHBOARD ─────────────────────────────────────────
+PG.dashboard=async()=>{
+  load();
+  const[ac,tx,no]=await Promise.all([api('GET','/accounts'),api('GET','/transactions?limit=5'),api('GET','/notifications')]);
+  const accounts=ac?.data?.accounts||[],txns=tx?.data?.transactions||[];
+  const totalBal=accounts.reduce((s,a)=>s+parseFloat(a.balance),0);
+  const unread=(no?.data?.notifications||[]).filter(n=>!n.is_read).length;
+  const h=new Date().getHours();
+  setC(`
+    <div class="topbar">
+      <div><h1 style="font-size:23px">${h<12?'Good morning':h<17?'Good afternoon':'Good evening'}, ${ST.user?.first_name} 👋</h1><p style="color:var(--ink3);font-size:13px">${new Date().toLocaleDateString('en-RW',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p></div>
+      <div style="display:flex;gap:8px">${unread>0?`<button onclick="navTo('notifications')" class="btn-outline btn-sm">✉ ${unread} new</button>`:''}
+      <button class="btn btn-sm" onclick="navTo('transfer')">➤ Send Money</button></div>
+    </div>
+    <div class="g4" style="margin-bottom:1.5rem">
+      <div class="scard" style="background:linear-gradient(135deg,var(--ink),#1a2440)">
+        <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Total Balance</div>
+        <div style="font-size:28px;font-weight:800;font-family:'Syne',sans-serif;color:#fff;letter-spacing:-.03em">${fmt(totalBal)}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:4px">RWF · ${accounts.length} account${accounts.length!==1?'s':''}</div>
+      </div>
+      <div class="scard"><div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Transactions</div><div style="font-size:28px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.03em">${txns.length}</div><div style="font-size:12px;color:var(--ink3);margin-top:4px">Recent activity</div></div>
+      <div class="scard"><div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Active Accounts</div><div style="font-size:28px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.03em;color:var(--teal)">${accounts.filter(a=>a.status==='active').length}</div><div style="font-size:12px;color:var(--ink3);margin-top:4px">Savings &amp; checking</div></div>
+      <div class="scard"><div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">AI Credit Score</div><div style="font-size:28px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.03em;color:var(--gold)" id="cs-d">—</div><div style="font-size:12px;color:var(--ink3);margin-top:4px" id="cs-ds">Loading...</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:1.25rem">
+      <div class="card">
+        <div class="sh"><h2 style="font-size:15px">Your Accounts</h2><button class="btn-ghost btn-sm" onclick="navTo('transfer')">+ Send</button></div>
+        ${accounts.length===0?'<p style="color:var(--ink3)">No accounts.</p>':accounts.map(a=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--sur3);border-radius:11px;margin-bottom:8px;border:1px solid var(--bdr)">
+          <div><p style="font-weight:600;text-transform:capitalize;font-size:13.5px">${a.account_type} Account</p><p class="mono" style="font-size:11px;color:var(--ink3);margin-top:1px">${a.account_number}</p></div>
+          <div style="text-align:right"><p style="font-weight:700;font-size:16px;font-family:'Syne',sans-serif">${fmt(a.balance)}<span style="font-size:11px;color:var(--ink3);font-family:'DM Sans',sans-serif"> RWF</span></p>
+          <span class="badge ${a.status==='active'?'bg':'br'}" style="margin-top:2px">${a.status}</span></div>
+        </div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="sh"><h2 style="font-size:15px">Quick Actions</h2></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          ${[['transfer','➤','Send Money'],['loans','◆','Apply for Loan'],['bills','◉','Pay Bills'],['analytics','◕','Analytics'],['support','💬','Support Chat'],['reports','📋','Reports']].map(([p,i,l])=>
+          `<button onclick="navTo('${p}')" style="text-align:left;display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:11px;border-color:var(--bdr);background:var(--sur3)"><span style="font-size:18px">${i}</span><span style="font-size:13px;font-weight:500">${l}</span></button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="sh"><h2 style="font-size:15px">Recent Transactions</h2><button class="btn-ghost btn-sm" onclick="navTo('transactions')">View all →</button></div>${txT(txns,false)}</div>`);
+  api('GET','/analytics/credit-score').then(d=>{const el=document.getElementById('cs-d'),sub=document.getElementById('cs-ds');if(el&&d?.data?.credit_score){el.textContent=d.data.credit_score;if(sub)sub.textContent=(d.data.risk_level||'')+' risk';}});
+};
+
+// ── TRANSFER ──────────────────────────────────────────────────
+PG.transfer=async()=>{
+  const ac=await api('GET','/accounts');const accounts=ac?.data?.accounts||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Send Money</h1><p style="color:var(--ink3);font-size:13px">Instant transfers across SmartBank accounts</p></div></div>
+  <div class="g2" style="max-width:860px">
+    <div>
+      <div class="card" style="margin-bottom:1rem"><h3 style="margin-bottom:1rem;font-size:14px">Available Balance</h3>
+        ${accounts.map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--sur3);border-radius:10px;margin-bottom:6px"><div><p style="font-weight:500;text-transform:capitalize;font-size:13px">${a.account_type}</p><p class="mono" style="font-size:11px;color:var(--ink3)">${a.account_number}</p></div><p style="font-weight:700;font-family:'Syne',sans-serif">${fmt(a.balance)} <span style="font-size:11px;color:var(--ink3);font-family:'DM Sans',sans-serif">RWF</span></p></div>`).join('')}
+      </div>
+      <div class="card" style="background:var(--gold3);border-color:var(--gold)"><p style="font-size:12.5px;color:var(--ink2)">⚡ Transfers are processed immediately with AI fraud screening. Flagged transactions are held for review.</p></div>
+    </div>
+    <div class="card"><h3 style="margin-bottom:1.25rem;font-size:14px">Transfer Details</h3>
+      <div class="fg"><label class="fl">Recipient Account Number</label>
+        <div style="display:flex;gap:8px"><input id="t-to" placeholder="e.g. 1000000003" style="flex:1"/><button onclick="verifyAcct()">Verify →</button></div>
+        <div id="t-v" style="margin-top:5px;font-size:12.5px"></div>
+      </div>
+      <div class="fg"><label class="fl">Amount (RWF)</label><input id="t-amt" type="number" placeholder="e.g. 50,000" min="100"/>
+        <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap">${[1000,5000,10000,50000,100000].map(a=>`<button class="btn-sm" onclick="document.getElementById('t-amt').value=${a}" style="font-size:11px;padding:4px 9px;background:var(--sur3);border-color:var(--bdr)">${fmt(a)}</button>`).join('')}</div>
+      </div>
+      <div class="fg"><label class="fl">Description <span style="color:var(--ink4);font-weight:400">(optional)</span></label><input id="t-desc" placeholder="e.g. Rent payment"/></div>
+      <div id="t-a" style="display:none"></div>
+      <button class="btn" onclick="doTransfer()" style="width:100%;padding:12px;font-size:15px" id="t-btn">➤ Send Money</button>
+    </div>
+  </div>`);
+};
+async function verifyAcct(){const num=document.getElementById('t-to').value.trim(),el=document.getElementById('t-v');if(!num)return;el.innerHTML='<span class="spin"></span>';const d=await api('GET',`/accounts/verify?account_number=${encodeURIComponent(num)}`);if(d?.success)el.innerHTML=`<span style="color:var(--teal);font-weight:500">✓ ${d.data.account.account_name} — ${d.data.account.account_type}</span>`;else el.innerHTML=`<span style="color:var(--red)">✗ ${d?.message||'Not found'}</span>`;}
+async function doTransfer(){
+  const to=document.getElementById('t-to').value.trim(),amount=parseFloat(document.getElementById('t-amt').value)||0,desc=document.getElementById('t-desc').value;
+  const aEl=document.getElementById('t-a'),btn=document.getElementById('t-btn');aEl.style.display='none';
+  if(!to||amount<100){aEl.className='alert ar';aEl.textContent='Enter recipient account and amount (min 100 RWF)';aEl.style.display='block';return;}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Processing...';
+  const d=await api('POST','/transactions/transfer',{receiver_account_number:to,amount,description:desc});
+  btn.disabled=false;btn.innerHTML='➤ Send Money';
+  if(!d?.success){aEl.className='alert ar';aEl.textContent=d?.message||'Transfer failed';aEl.style.display='block';return;}
+  if(d.data.fraud_flagged){aEl.className='alert aa';aEl.innerHTML=`⚠ Transfer flagged (AI score: ${(d.data.fraud_score*100).toFixed(0)}%). Review within 24h. Email alert sent.`;}
+  else{aEl.className='alert ag';aEl.innerHTML=`✓ ${fmt(amount)} RWF sent! Ref: <strong class="mono">${d.data.transaction.reference}</strong>. Confirmation email sent.`;}
+  aEl.style.display='block';document.getElementById('t-amt').value='';document.getElementById('t-to').value='';document.getElementById('t-desc').value='';document.getElementById('t-v').innerHTML='';
+}
+
+// ── TRANSACTIONS ──────────────────────────────────────────────
+PG.transactions=async()=>{
+  load();const isA=['super_admin','branch_manager','fraud_analyst','auditor'].includes(ST.user?.role);
+  const d=await api('GET',isA?'/transactions/all?limit=60':'/transactions?limit=60');const txns=d?.data?.transactions||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">${isA?'All Transactions':'My Transactions'}</h1><p style="color:var(--ink3);font-size:13px">${txns.length} records</p></div></div>
+  <div class="card" style="margin-bottom:1rem;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <select id="f-type" style="width:150px" onchange="fTxns()"><option value="">All Types</option><option>transfer</option><option>deposit</option><option>withdrawal</option><option>bill_payment</option></select>
+    <select id="f-sta" style="width:150px" onchange="fTxns()"><option value="">All Status</option><option>completed</option><option>flagged</option><option>pending</option><option>blocked</option></select>
+    ${isA?`<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:8px 12px;background:var(--red3);border-radius:var(--r);border:1px solid #fecaca"><input type="checkbox" id="f-flag" onchange="fTxns()"> Flagged only</label>`:''}
+    <span id="f-cnt" class="metric">${txns.length} results</span>
+  </div>
+  <div class="card" style="overflow:auto"><div id="txn-wrap">${txT(txns,isA)}</div></div>`);
+  window._txns=txns;
+};
+window.fTxns=function(){
+  const t=document.getElementById('f-type')?.value||'',s=document.getElementById('f-sta')?.value||'',f=document.getElementById('f-flag')?.checked||false;
+  let r=window._txns||[];if(t)r=r.filter(x=>x.type===t);if(s)r=r.filter(x=>x.status===s);if(f)r=r.filter(x=>x.is_flagged);
+  const isA=['super_admin','branch_manager','fraud_analyst','auditor'].includes(ST.user?.role);
+  const w=document.getElementById('txn-wrap');if(w)w.innerHTML=txT(r,isA);
+  const c=document.getElementById('f-cnt');if(c)c.textContent=r.length+' results';
+};
+function txT(txns,isA=false){
+  if(!txns.length)return'<p style="color:var(--ink3);padding:1.5rem;text-align:center">No transactions found.</p>';
+  return`<table><thead><tr><th>Reference</th><th>From</th><th>To</th><th>Amount</th><th>Type</th><th>Status</th>${isA?'<th>AI Score</th>':''}<th>Date</th></tr></thead><tbody>
+  ${txns.map(t=>`<tr>
+    <td class="mono" style="font-size:11.5px;color:var(--ink3)">${t.reference||'—'}</td>
+    <td style="font-size:12.5px">${t.sender_name||'—'}</td><td style="font-size:12.5px">${t.receiver_name||'—'}</td>
+    <td class="mono" style="font-weight:600">${fmt(t.amount)} <span style="color:var(--ink3);font-size:11px;font-family:'DM Sans',sans-serif">RWF</span></td>
+    <td><span class="badge bgr" style="text-transform:capitalize">${(t.type||'').replace(/_/g,' ')}</span></td>
+    <td><span class="badge ${t.status==='completed'?'bg':t.status==='flagged'||t.is_flagged?'br':t.status==='blocked'?'br':'ba'}">${t.status||'—'}</span></td>
+    ${isA?`<td>${t.fraud_score!=null?`<div style="display:flex;align-items:center;gap:5px"><div class="pbar" style="width:48px"><div class="pval" style="width:${(t.fraud_score*100).toFixed(0)}%;background:${t.fraud_score>.6?'var(--red)':t.fraud_score>.3?'var(--amber)':'var(--teal)'}"></div></div><span style="font-size:11px;font-weight:600">${(t.fraud_score*100).toFixed(0)}%</span></div>`:'—'}</td>`:''}
+    <td style="font-size:11.5px;color:var(--ink3)">${t.created_at?new Date(t.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+// ── LOANS ─────────────────────────────────────────────────────
+PG.loans=async()=>{
+  load();const d=await api('GET','/loans');const loans=d?.data?.loans||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Loans</h1><p style="color:var(--ink3);font-size:13px">Apply and manage your loan applications</p></div><button class="btn" onclick="showLoanModal()">+ Apply for Loan</button></div>
+  <div class="g4" style="margin-bottom:1.5rem">
+    <div class="scard" style="background:var(--blue3);border-color:var(--blue)"><div style="font-size:10.5px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Credit Score</div><div style="font-size:28px;font-weight:800;font-family:'Syne',sans-serif;color:var(--blue);letter-spacing:-.03em" id="cs-v">—</div><div style="font-size:12px;color:var(--ink2);margin-top:4px" id="cs-r">Loading AI score...</div></div>
+    ${[['Personal','12%'],['Business','18%'],['Agricultural','15%']].map(([t,r])=>`<div class="scard"><div style="font-size:10.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">${t} Rate</div><div style="font-size:24px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.03em">${r}</div><div style="font-size:12px;color:var(--ink3);margin-top:4px">per annum</div></div>`).join('')}
+  </div>
+  <div class="card">${loans.length===0?'<div style="text-align:center;padding:2rem;color:var(--ink3)"><div style="font-size:40px;margin-bottom:8px">💰</div><p>No loan applications yet.</p></div>':
+  `<table><thead><tr><th>Type</th><th>Amount</th><th>Duration</th><th>Monthly</th><th>AI Score</th><th>Risk</th><th>Status</th><th>Date</th></tr></thead><tbody>
+  ${loans.map(l=>`<tr><td style="text-transform:capitalize;font-weight:500">${l.loan_type}</td><td class="mono">${fmt(l.principal_amount)} RWF</td><td>${l.duration_months} mo.</td><td class="mono">${fmt(l.monthly_payment)} RWF</td>
+  <td style="font-weight:700;color:${parseFloat(l.ai_credit_score)>=700?'var(--teal)':parseFloat(l.ai_credit_score)>=550?'var(--amber)':'var(--red)'}">${l.ai_credit_score||'—'}</td>
+  <td><span class="badge ${l.ai_risk_level==='low'?'bg':l.ai_risk_level==='high'?'br':'ba'}">${l.ai_risk_level||'—'}</span></td>
+  <td><span class="badge ${l.status==='approved'?'bg':l.status==='rejected'?'br':l.status==='applied'?'bb':'ba'}" style="text-transform:capitalize">${l.status}</span></td>
+  <td style="font-size:11.5px;color:var(--ink3)">${l.created_at?new Date(l.created_at).toLocaleDateString():''}</td></tr>`).join('')}</tbody></table>`}</div>
+  <div id="loan-ma"></div>`);
+  api('GET','/analytics/credit-score').then(d=>{const v=document.getElementById('cs-v'),r=document.getElementById('cs-r');if(v&&d?.data?.credit_score){v.textContent=d.data.credit_score;if(r)r.textContent=(d.data.risk_level||'unknown')+' risk';}});
+};
+function showLoanModal(){document.getElementById('loan-ma').innerHTML=`<div class="modal-wrap" onclick="if(event.target===this)this.innerHTML=''"><div class="modal"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem"><div><h2 style="font-size:20px">Loan Application</h2><p style="font-size:13px;color:var(--ink3)">AI-powered eligibility check</p></div><button onclick="document.getElementById('loan-ma').innerHTML=''" style="border:none;background:none;font-size:24px;color:var(--ink3)">×</button></div>
+<div class="fg"><label class="fl">Loan Type</label><select id="lm-t"><option value="personal">Personal Loan</option><option value="business">Business Loan</option><option value="agricultural">Agricultural Loan</option><option value="education">Education Loan</option><option value="mortgage">Mortgage</option></select></div>
+<div class="fg"><label class="fl">Amount (RWF, min 50,000)</label><input id="lm-a" type="number" placeholder="500,000" min="50000"/></div>
+<div class="fg"><label class="fl">Duration</label><select id="lm-m"><option value="6">6 months</option><option value="12" selected>12 months</option><option value="18">18 months</option><option value="24">24 months</option><option value="36">36 months</option></select></div>
+<div class="fg"><label class="fl">Purpose</label><textarea id="lm-p" rows="2" style="height:60px;resize:none" placeholder="Describe the purpose..."></textarea></div>
+<div id="lm-al" style="display:none"></div><button class="btn" onclick="submitLoan()" style="width:100%;padding:12px" id="lm-btn">Submit Application →</button></div></div>`;}
+async function submitLoan(){const btn=document.getElementById('lm-btn'),aEl=document.getElementById('lm-al'),amount=parseFloat(document.getElementById('lm-a').value)||0;aEl.style.display='none';if(amount<50000){aEl.className='alert ar';aEl.textContent='Minimum loan amount is 50,000 RWF';aEl.style.display='block';return;}btn.disabled=true;btn.innerHTML='<span class="spin"></span> Analyzing...';const d=await api('POST','/loans/apply',{loan_type:document.getElementById('lm-t').value,principal_amount:amount,duration_months:parseInt(document.getElementById('lm-m').value),purpose:document.getElementById('lm-p').value});btn.disabled=false;btn.textContent='Submit Application →';if(!d?.success){aEl.className='alert ar';aEl.textContent=d?.message||'Failed';aEl.style.display='block';return;}document.getElementById('loan-ma').innerHTML='';toast('Loan submitted! AI Score: '+d.data.ai_score+'. Email sent.');PG.loans();}
+
+// ── BILLS ─────────────────────────────────────────────────────
+PG.bills=async()=>{
+  load();const[br,ar]=await Promise.all([api('GET','/bills/billers'),api('GET','/accounts')]);
+  const billers=br?.data?.billers||[],accounts=ar?.data?.accounts||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Pay Bills</h1><p style="color:var(--ink3);font-size:13px">Utilities, mobile, taxes and more</p></div></div>
+  <div class="g2">
+    <div><h3 style="margin-bottom:1rem;font-size:14px">Select Service</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${billers.map(b=>`<div id="bc-${b.code}" onclick="selBiller('${b.code}','${b.name}')" style="border:1.5px solid var(--bdr);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .2s;background:var(--sur2)"><p style="font-size:13px;font-weight:600">${b.name}</p><p style="font-size:11px;color:var(--ink3);margin-top:2px">${b.category}</p></div>`).join('')}
+      </div>
+    </div>
+    <div class="card"><h3 style="margin-bottom:1.25rem;font-size:14px">Payment Details</h3>
+      <div id="bl-show" style="background:var(--sur3);border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--ink3);border:1px dashed var(--bdr)">← Select a service</div>
+      <div class="fg"><label class="fl">Pay From Account</label><select id="bl-acc">${accounts.map(a=>`<option value="${a.id}">${a.account_type} — ${a.account_number} (${fmt(a.balance)} RWF)</option>`).join('')}</select></div>
+      <div class="fg"><label class="fl">Customer Ref / Meter No.</label><input id="bl-ref" placeholder="e.g. 0160123456"/></div>
+      <div class="fg"><label class="fl">Amount (RWF)</label><input id="bl-amt" type="number" placeholder="e.g. 5,000"/></div>
+      <div id="bl-a" style="display:none"></div>
+      <button class="btn" onclick="payBill()" id="bl-btn" disabled style="width:100%;padding:12px;opacity:.4">Pay Bill</button>
+    </div>
+  </div>`);window._selBiller=null;
+};
+window.selBiller=function(code,name){window._selBiller={code,name};document.querySelectorAll('[id^="bc-"]').forEach(el=>{el.style.borderColor='var(--bdr)';el.style.background='var(--sur2)';});const sel=document.getElementById('bc-'+code);sel.style.borderColor='var(--blue)';sel.style.background='var(--blue3)';document.getElementById('bl-show').innerHTML=`<strong style="color:var(--ink)">${name}</strong> selected`;const btn=document.getElementById('bl-btn');btn.disabled=false;btn.style.opacity='1';};
+async function payBill(){if(!window._selBiller)return;const aEl=document.getElementById('bl-a'),btn=document.getElementById('bl-btn');aEl.style.display='none';const accId=document.getElementById('bl-acc').value,ref=document.getElementById('bl-ref').value.trim(),amount=parseFloat(document.getElementById('bl-amt').value)||0;if(!ref){aEl.className='alert ar';aEl.textContent='Customer reference is required';aEl.style.display='block';return;}if(amount<100){aEl.className='alert ar';aEl.textContent='Minimum 100 RWF';aEl.style.display='block';return;}btn.disabled=true;btn.innerHTML='<span class="spin"></span>';const d=await api('POST','/bills/pay',{account_id:accId,biller_code:window._selBiller.code,biller_name:window._selBiller.name,customer_ref:ref,amount});btn.disabled=false;btn.textContent='Pay Bill';if(!d?.success){aEl.className='alert ar';aEl.textContent=d?.message||'Failed';aEl.style.display='block';return;}aEl.className='alert ag';aEl.innerHTML=`✓ ${window._selBiller.name} — ${fmt(amount)} RWF paid. Ref: <strong class="mono">${d.data.receipt.reference}</strong>`;aEl.style.display='block';document.getElementById('bl-amt').value='';document.getElementById('bl-ref').value='';}
+
+// ── ANALYTICS ─────────────────────────────────────────────────
+PG.analytics=async()=>{
+  load();const[sp,cs,adv]=await Promise.all([api('GET','/analytics/spending'),api('GET','/analytics/credit-score'),api('GET','/analytics/advice')]);
+  const cats=sp?.data?.categories||[],total=sp?.data?.total_spent||0,insights=sp?.data?.insights||[];
+  const score=cs?.data?.credit_score,risk=cs?.data?.risk_level||'unknown',sP=score?((score-300)/(850-300)*100).toFixed(1):0;
+  const advice=adv?.data?.advice||[];const clrs=['#3b5bdb','#a855f7','#ec4899','#c9a84c','#0d9488','#06b6d4','#f97316'];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Financial Analytics</h1><p style="color:var(--ink3);font-size:13px">AI-powered insights into your financial health</p></div></div>
+  <div class="g2" style="margin-bottom:1.25rem">
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">AI Credit Score</h3>
+      <div style="display:flex;align-items:flex-end;gap:1rem;margin-bottom:1rem">
+        <div style="font-size:52px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.05em;color:${score>=700?'var(--teal)':score>=550?'var(--amber)':'var(--red)'}">${score||'—'}</div>
+        <div style="padding-bottom:8px"><p style="color:var(--ink3);font-size:12px">out of 850</p><span class="badge ${risk==='low'?'bg':risk==='high'?'br':'ba'}" style="margin-top:4px">${risk} risk</span></div>
+      </div>
+      <div class="pbar" style="height:10px;margin-bottom:10px;border-radius:5px"><div class="pval" style="width:${sP}%;background:linear-gradient(90deg,var(--red),var(--amber),var(--teal))"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink3)"><span>Poor 300</span><span>Fair 550</span><span>Good 700</span><span>850</span></div>
+      ${cs?.data?.recommendation?`<div class="alert ab" style="margin-top:1rem">${cs.data.recommendation}</div>`:''}
+      ${cs?.data?.max_loan_amount?`<p style="font-size:12px;color:var(--ink2);margin-top:8px">Max loan eligibility: <strong>${fmt(cs.data.max_loan_amount)} RWF</strong></p>`:''}
+    </div>
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Spending by Category <span style="font-weight:400;color:var(--ink3);font-size:12px">(last 30 days)</span></h3>
+      ${cats.length===0?'<div style="text-align:center;padding:2rem;color:var(--ink3)"><div style="font-size:36px;margin-bottom:8px">📊</div><p>Make transactions to see analytics.</p></div>':
+      cats.map((c,i)=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="display:flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:50%;background:${clrs[i%clrs.length]};display:inline-block"></span>${c.category}</span><span style="font-weight:600">${fmt(c.amount)} RWF <span style="color:var(--ink3);font-weight:400">${c.percentage}%</span></span></div><div class="pbar"><div class="pval" style="width:${c.percentage}%;background:${clrs[i%clrs.length]}"></div></div></div>`).join('')}
+      ${total?`<p style="font-size:12px;color:var(--ink3);margin-top:8px">Total: ${fmt(total)} RWF</p>`:''}
+    </div>
+  </div>
+  ${advice.length||insights.length?`<div class="card"><h3 style="margin-bottom:1rem;font-size:14px">💡 AI Financial Advisor</h3><div class="g3">${advice.map(a=>`<div style="padding:14px;background:${a.priority==='high'?'#fff5f5':a.priority==='medium'?'var(--amber3)':'#f0fdf4'};border-radius:12px;border:1px solid ${a.priority==='high'?'#fecaca':a.priority==='medium'?'#fde68a':'#bbf7d0'}"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${a.priority==='high'?'var(--red)':a.priority==='medium'?'var(--amber)':'var(--teal)'};margin-bottom:6px">${a.type} · ${a.priority}</div><p style="font-size:13px;line-height:1.5">${a.message}</p></div>`).join('')}${insights.map(ins=>`<div class="alert ab" style="margin:0">${ins}</div>`).join('')}</div></div>`:''}
+  `);
+};
+
+// ── SUPPORT CHAT ──────────────────────────────────────────────
+PG.support=async()=>{
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Support Chat</h1><p style="color:var(--ink3);font-size:13px">AI-powered 24/7 customer support</p></div></div>
+  <div style="max-width:700px"><div class="card">
+    <div style="display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--bdr);margin-bottom:14px">
+      <div style="width:42px;height:42px;background:linear-gradient(135deg,var(--ink),#1a2440);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>
+      <div><p style="font-weight:700;font-size:15px">SmartBot Assistant</p><p style="font-size:11.5px;color:var(--teal);font-weight:500">● Online — Powered by Claude AI</p></div>
+      <div style="margin-left:auto"><span class="badge bt">24/7 Support</span></div>
+    </div>
+    <div id="chat-msgs" style="height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;padding-right:4px">
+      <div class="bmsg">Hello ${ST.user?.first_name}! 👋 I'm SmartBot. I can help with account queries, transfers, loans, fraud reports, and financial advice. I speak English, French, and Kinyarwanda.</div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      ${['💰 Check my balance','🏦 Apply for a loan','⚠ Report fraud','💡 Savings tips','📊 My credit score'].map(q=>`<button onclick="sendChat('${q}')" style="font-size:11.5px;padding:5px 11px;border-radius:20px;background:var(--sur3)">${q}</button>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px">
+      <input id="chat-in" placeholder="Type your message..." style="flex:1" onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="btn" onclick="sendChat()" id="chat-btn" style="padding:10px 18px">Send →</button>
+    </div>
+  </div></div>`);window._cSess=null;
+};
+async function sendChat(preset){const input=document.getElementById('chat-in');const msg=(preset||input?.value||'').trim();if(!msg)return;if(input)input.value='';const msgs=document.getElementById('chat-msgs');if(!msgs)return;msgs.innerHTML+=`<div class="cmsg">${msg.replace(/[<>]/g,c=>c==='<'?'&lt;':'&gt;')}</div>`;msgs.innerHTML+=`<div class="bmsg" id="ct"><div class="dots"><span></span><span></span><span></span></div></div>`;msgs.scrollTop=msgs.scrollHeight;document.getElementById('chat-btn').disabled=true;const d=await api('POST','/chatbot/message',{message:msg,session_id:window._cSess});document.getElementById('chat-btn').disabled=false;const ct=document.getElementById('ct');if(ct)ct.remove();if(d?.success){window._cSess=d.data.session_id;msgs.innerHTML+=`<div class="bmsg">${(d.data.message||'').replace(/\n/g,'<br>').replace(/</g,'&lt;').replace(/&lt;br>/g,'<br>')}</div>`;}else msgs.innerHTML+=`<div class="bmsg" style="color:var(--red)">Sorry, connection issue. Please try again.</div>`;msgs.scrollTop=msgs.scrollHeight;}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────
+PG.notifications=async()=>{
+  load();const d=await api('GET','/notifications');const notifs=d?.data?.notifications||[];
+  const ICO={transaction:'➤',loan_update:'◆',fraud_alert:'⚠',account_update:'♠',login:'🔑',system:'⚙'};
+  const unread=notifs.filter(n=>!n.is_read).length;
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Notifications</h1><p style="color:var(--ink3);font-size:13px">${unread} unread · ${notifs.length} total</p></div>${unread>0?`<button class="btn-outline btn-sm" onclick="markAllRead()">✓ Mark all read</button>`:''}</div>
+  <div style="max-width:680px;display:flex;flex-direction:column;gap:8px" id="notif-list">
+  ${notifs.length===0?'<div class="card" style="text-align:center;padding:2rem;color:var(--ink3)"><div style="font-size:40px;margin-bottom:8px">✉</div><p>No notifications yet.</p></div>':
+  notifs.map(n=>`<div onclick="markRead('${n.id}')" style="display:flex;gap:14px;padding:14px 16px;background:${!n.is_read?'#eef2ff':'var(--sur2)'};border:1.5px solid ${!n.is_read?'#c7d2fe':'var(--bdr)'};border-radius:14px;cursor:pointer;transition:background .15s">
+    <div style="width:38px;height:38px;border-radius:50%;background:var(--sur3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">${ICO[n.type]||'✉'}</div>
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <p style="font-weight:${!n.is_read?700:500};font-size:14px">${n.title}${!n.is_read?'<span style="display:inline-block;width:7px;height:7px;background:var(--blue);border-radius:50%;margin-left:7px;vertical-align:middle"></span>':''}</p>
+        <span style="font-size:11px;color:var(--ink3);white-space:nowrap">${n.created_at?new Date(n.created_at).toLocaleDateString():''}</span>
+      </div>
+      <p style="font-size:13px;color:var(--ink2)">${n.body}</p>
+    </div>
+  </div>`).join('')}</div>`);
+  window.markRead=async function(id){await api('PUT',`/notifications/${id}/read`);PG.notifications();};
+  window.markAllRead=async function(){const ids=(d?.data?.notifications||[]).filter(n=>!n.is_read).map(n=>n.id);await Promise.all(ids.map(id=>api('PUT',`/notifications/${id}/read`)));toast('All marked as read');PG.notifications();pollNotifs();};
+};
+
+// ── REPORTS (all roles) ────────────────────────────────────────
+PG.reports=async()=>{
+  load();const role=ST.user?.role;const isA=['super_admin','branch_manager','fraud_analyst','auditor'].includes(role);
+  const[ac,tx,cs]=await Promise.all([api('GET','/accounts'),isA?api('GET','/transactions/all?limit=200'):api('GET','/transactions?limit=200'),role==='customer'?api('GET','/analytics/credit-score'):null]);
+  const accounts=ac?.data?.accounts||[],transactions=tx?.data?.transactions||[];
+  const totalBal=accounts.reduce((s,a)=>s+parseFloat(a.balance),0);
+  const completed=transactions.filter(t=>t.status==='completed'),flagged=transactions.filter(t=>t.is_flagged||t.status==='flagged');
+  const totalVol=completed.reduce((s,t)=>s+parseFloat(t.amount||0),0);
+  const byType={};transactions.forEach(t=>{byType[t.type]=(byType[t.type]||0)+1;});
+  const maxT=Math.max(...Object.values(byType),1);
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Reports &amp; Analytics</h1><p style="color:var(--ink3);font-size:13px">Generated ${new Date().toLocaleDateString('en-RW',{year:'numeric',month:'long',day:'numeric'})}</p></div><button class="btn" onclick="window.print()">🖨 Print Report</button></div>
+  <div class="g4" style="margin-bottom:1.5rem">
+    ${role==='customer'?`
+    <div class="rstat"><div class="v" style="color:var(--blue)">${fmt(totalBal)}</div><div class="l">Balance (RWF)</div></div>
+    <div class="rstat"><div class="v" style="color:var(--teal)">${transactions.length}</div><div class="l">Total Transactions</div></div>
+    <div class="rstat"><div class="v" style="color:var(--gold)">${cs?.data?.credit_score||'—'}</div><div class="l">Credit Score</div></div>
+    <div class="rstat"><div class="v" style="color:var(--red)">${flagged.length}</div><div class="l">Flagged Txns</div></div>
+    `:`
+    <div class="rstat"><div class="v" style="color:var(--blue)">${transactions.length}</div><div class="l">Total Transactions</div></div>
+    <div class="rstat"><div class="v" style="color:var(--teal)">${fmt(totalVol)}</div><div class="l">Volume (RWF)</div></div>
+    <div class="rstat"><div class="v" style="color:var(--red)">${flagged.length}</div><div class="l">Flagged</div></div>
+    <div class="rstat"><div class="v" style="color:var(--gold)">${completed.length}</div><div class="l">Completed</div></div>
+    `}
+  </div>
+  <div class="g2" style="margin-bottom:1.25rem">
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Transaction Breakdown by Type</h3>
+      ${Object.entries(byType).map(([type,count])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)"><span style="text-transform:capitalize;font-weight:500">${type.replace(/_/g,' ')}</span><div style="display:flex;align-items:center;gap:10px"><div class="pbar" style="width:80px"><div class="pval" style="width:${(count/maxT*100).toFixed(0)}%;background:var(--blue)"></div></div><span class="badge bb">${count}</span></div></div>`).join('')||'<p style="color:var(--ink3)">No data</p>'}
+    </div>
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Status Summary</h3>
+      ${[['completed','bg',completed.length],['flagged','br',flagged.length],['pending','ba',transactions.filter(t=>t.status==='pending').length],['blocked','br',transactions.filter(t=>t.status==='blocked').length]].map(([s,cls,n])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)"><span class="badge ${cls}" style="text-transform:capitalize">${s}</span><span style="font-weight:800;font-family:'Syne',sans-serif;font-size:20px">${n}</span></div>`).join('')}
+      <div style="margin-top:1rem;padding:12px;background:var(--sur3);border-radius:10px"><p style="font-size:12px;color:var(--ink3)">Completion rate</p><div style="display:flex;align-items:center;gap:10px;margin-top:5px"><div class="pbar" style="flex:1"><div class="pval" style="width:${transactions.length?((completed.length/transactions.length)*100).toFixed(0):0}%;background:var(--teal)"></div></div><span style="font-weight:700;font-size:14px">${transactions.length?((completed.length/transactions.length)*100).toFixed(0):0}%</span></div></div>
+    </div>
+  </div>
+  <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Transaction Report (latest 20)</h3>${txT(transactions.slice(0,20),isA)}${transactions.length>20?`<p style="font-size:12px;color:var(--ink3);margin-top:8px;text-align:center">Showing 20 of ${transactions.length}. Print for full report.</p>`:''}</div>
+  <style>@media print{.sidebar,.topbar button{display:none!important}.main{margin-left:0!important;padding:1rem!important}}</style>`);
+};
+
+// ── SETTINGS (all roles) ───────────────────────────────────────
+PG.settings=async()=>{
+  load();const d=await api('GET','/profile');const u=d?.data?.user||ST.user;const r=RL[u?.role]||RL.customer;
+  const ini=(u?.first_name?.[0]||'')+(u?.last_name?.[0]||'');
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Settings</h1><p style="color:var(--ink3);font-size:13px">Profile, security, notifications and system</p></div></div>
+  <div class="tabs">
+    <button class="tab active" onclick="stab('profile',this)">👤 Profile</button>
+    <button class="tab" onclick="stab('security',this)">🔒 Security</button>
+    <button class="tab" onclick="stab('notifs',this)">🔔 Notifications</button>
+    ${u?.role==='super_admin'?'<button class="tab" onclick="stab(\'system\',this)">⚙ System</button>':''}
+  </div>
+  <!-- Profile -->
+  <div id="st-profile" class="g2" style="max-width:900px">
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div class="card" style="text-align:center">
+        <div style="width:78px;height:78px;border-radius:50%;background:${r.c}22;color:${r.c};display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto 14px;font-family:'Syne',sans-serif">${ini}</div>
+        <p style="font-weight:700;font-size:17px">${u?.first_name} ${u?.last_name}</p>
+        <p style="font-size:12px;color:${r.c};margin:5px 0;font-weight:600">${r.l}</p>
+        <p style="font-size:12px;color:var(--ink3)">${u?.branch_name||'Head Office'}</p>
+        <div style="margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <span class="badge ${u?.status==='active'?'bg':'br'}">${u?.status}</span>
+          <span class="badge ${u?.kyc_verified?'bt':'ba'}">${u?.kyc_verified?'✓ KYC Verified':'KYC Pending'}</span>
+          ${u?.two_fa_enabled?'<span class="badge bb">🔐 2FA Active</span>':''}
+        </div>
+      </div>
+      <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Account Info</h3>
+        ${[['Email',u?.email||'—'],['Phone',u?.phone||'—'],['Member since',u?.created_at?new Date(u.created_at).toLocaleDateString():'—'],['Last login',u?.last_login_at?new Date(u.last_login_at).toLocaleString():'Never'],['Last IP',u?.last_login_ip||'—']].map(([k,v])=>`<div class="sr"><span style="font-size:13px;color:var(--ink3)">${k}</span><span style="font-size:13px;font-weight:500">${v}</span></div>`).join('')}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Edit Profile</h3>
+        <div class="fr"><div class="fg"><label class="fl">First Name</label><input id="p-fn" value="${u?.first_name||''}"/></div><div class="fg"><label class="fl">Last Name</label><input id="p-ln" value="${u?.last_name||''}"/></div></div>
+        <div class="fg"><label class="fl">Email <span style="color:var(--ink4);font-weight:400">(read-only)</span></label><input value="${u?.email||''}" disabled style="opacity:.45"/></div>
+        <div class="fg"><label class="fl">Phone</label><input id="p-ph" value="${u?.phone||''}"/></div>
+        <div class="fg"><label class="fl">Address</label><input id="p-ad" value="${u?.address||''}"/></div>
+        <div id="p-al" style="display:none"></div><button class="btn" onclick="saveProf()" id="p-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+  <!-- Security -->
+  <div id="st-security" style="display:none;max-width:600px">
+    <div class="card" style="margin-bottom:1rem"><h3 style="margin-bottom:1rem;font-size:14px">Change Password</h3>
+      <div class="fg"><label class="fl">Current Password</label><input id="cp-o" type="password"/></div>
+      <div class="fg"><label class="fl">New Password <span style="color:var(--ink4);font-weight:400">(min 8)</span></label><input id="cp-n" type="password"/></div>
+      <div class="fg"><label class="fl">Confirm New Password</label><input id="cp-n2" type="password"/></div>
+      <div id="cp-al" style="display:none"></div><button onclick="changePass()" id="cp-btn" class="btn">Update Password</button>
+      <p style="font-size:12px;color:var(--ink3);margin-top:8px">A confirmation email will be sent to ${u?.email}</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem"><h3 style="margin-bottom:.5rem;font-size:14px">Two-Factor Authentication (2FA)</h3>
+      <p style="font-size:13px;color:var(--ink3);margin-bottom:1rem">Adds extra security using Google Authenticator or Authy.</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:${u?.two_fa_enabled?'#f0fdf4':'var(--sur3)'};border-radius:10px;margin-bottom:10px">
+        <div><p style="font-weight:600;font-size:13px">2FA Status</p><p style="font-size:12px;color:${u?.two_fa_enabled?'var(--teal)':'var(--ink3)'}">${u?.two_fa_enabled?'✓ Protecting your account':'Not yet enabled'}</p></div>
+        <span class="badge ${u?.two_fa_enabled?'bg':'ba'}">${u?.two_fa_enabled?'Active':'Inactive'}</span>
+      </div>
+      <button onclick="setup2FA()" class="${u?.two_fa_enabled?'btn-outline':'btn'}">${u?.two_fa_enabled?'Reconfigure 2FA':'Enable 2FA →'}</button>
+    </div>
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Active Sessions</h3>
+      <div style="padding:12px;background:var(--sur3);border-radius:10px;display:flex;justify-content:space-between;align-items:center">
+        <div><p style="font-size:13px;font-weight:500">Current Session</p><p class="mono" style="font-size:11px;color:var(--ink3)">${u?.last_login_ip||'Unknown IP'}</p></div>
+        <span class="badge bg">Active</span>
+      </div>
+    </div>
+  </div>
+  <!-- Notifications config -->
+  <div id="st-notifs" style="display:none;max-width:600px">
+    <div class="card"><h3 style="margin-bottom:1.25rem;font-size:14px">Email Notification Preferences</h3>
+      <div class="alert ab" style="margin-bottom:1rem">Emails sent to <strong>${u?.email}</strong>. Configure SMTP in <code>backend/.env</code> to enable delivery.</div>
+      ${[['Login alerts','Email for every new sign-in','n-login'],['Transaction alerts','Confirmation for all transactions','n-txn'],['Fraud alerts','Immediate alert on suspicious activity','n-fraud'],['Loan updates','Updates on loan application status','n-loan'],['Account changes','Profile/account modification notices','n-acc'],['OTP codes','OTPs via email for security actions','n-otp']].map(([title,desc,id])=>`<div class="sr"><div><p style="font-size:13px;font-weight:500">${title}</p><p style="font-size:12px;color:var(--ink3)">${desc}</p></div><label class="tgl"><input type="checkbox" id="${id}" checked><span class="sldr"></span></label></div>`).join('')}
+      <div style="margin-top:1rem"><button class="btn" onclick="toast('Notification preferences saved!')">Save Preferences</button></div>
+    </div>
+  </div>
+  <!-- System (super_admin) -->
+  <div id="st-system" style="display:none;max-width:700px">
+    <div class="card" style="margin-bottom:1rem"><h3 style="margin-bottom:1rem;font-size:14px">Email / SMTP Configuration</h3>
+      <div class="alert aa" style="margin-bottom:1rem">Configure in <code>backend/.env</code> — changes require backend restart. Test with "Send Test Email".</div>
+      <div class="g2">
+        <div class="fg"><label class="fl">SMTP Host</label><input id="sm-h" placeholder="smtp.gmail.com"/></div>
+        <div class="fg"><label class="fl">SMTP Port</label><input id="sm-p" placeholder="587"/></div>
+        <div class="fg"><label class="fl">Gmail Address</label><input id="sm-u" placeholder="your@gmail.com"/></div>
+        <div class="fg"><label class="fl">App Password</label><input id="sm-pw" type="password" placeholder="Gmail app password"/></div>
+      </div>
+      <div style="padding:12px;background:var(--sur3);border-radius:10px;margin-bottom:1rem"><p style="font-size:12.5px;color:var(--ink2)"><strong>Gmail setup:</strong> Enable 2FA on Gmail → Security → App Passwords → Generate → paste as SMTP_PASS in backend/.env</p></div>
+      <div style="display:flex;gap:8px"><button class="btn-outline" onclick="toast('Test email sent (if SMTP configured)','info')">📧 Send Test Email</button></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem"><h3 style="margin-bottom:1rem;font-size:14px">AI Model Management</h3><div id="ai-area"><button class="btn" onclick="loadAI()">Check AI Status</button></div></div>
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">System Information</h3>
+      <div class="sr"><span style="font-size:13px;color:var(--ink3)">Backend API</span><span class="badge bg">Running on :5000</span></div>
+      <div class="sr"><span style="font-size:13px;color:var(--ink3)">AI Service</span><span id="ai-badge" class="badge ba">Checking...</span></div>
+      <div class="sr" style="border:none"><span style="font-size:13px;color:var(--ink3)">Version</span><span class="mono" style="font-size:12px">SmartBank AI v3.0.0</span></div>
+    </div>
+  </div>
+  <div id="tfa-area"></div>`);
+  if(u?.role==='super_admin'){api('GET','/analytics/ai-status').then(d=>{const b=document.getElementById('ai-badge');if(b){b.className='badge '+(d?.data?.ml_available?'bg':'br');b.textContent=d?.data?.ml_available?'Online':'Offline';}});}
+};
+window.stab=function(tab,btn){document.querySelectorAll('[id^="st-"]').forEach(el=>el.style.display='none');document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));const el=document.getElementById('st-'+tab);if(el)el.style.display='';if(btn)btn.classList.add('active');};
+window.loadAI=async function(){const area=document.getElementById('ai-area');if(area)area.innerHTML='<span class="spin"></span>';const d=await api('GET','/analytics/ai-status');if(area&&d?.data){area.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">${[['ML',d.data.ml_available],['Fraud',d.data.fraud_model],['Credit',d.data.credit_model],['Anomaly',d.data.anomaly_model],['TensorFlow',d.data.tensorflow_available]].map(([k,v])=>`<div style="padding:10px;background:var(--sur3);border-radius:10px;text-align:center"><p style="font-size:11px;color:var(--ink3)">${k}</p><span class="badge ${v?'bg':'ba'}" style="margin-top:4px">${v?'✓ OK':'—'}</span></div>`).join('')}</div><button class="btn-danger btn-sm" onclick="retrainAI()">⟳ Retrain All Models</button>`;}};
+window.retrainAI=async function(){if(!confirm('Retrain all AI models?'))return;const d=await api('POST','/analytics/retrain');toast(d?.success?'Models retrained!':'Retrain failed','info');};
+async function saveProf(){const btn=document.getElementById('p-btn'),aEl=document.getElementById('p-al');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';const d=await api('PUT','/profile',{first_name:document.getElementById('p-fn').value,last_name:document.getElementById('p-ln').value,phone:document.getElementById('p-ph').value,address:document.getElementById('p-ad').value});btn.disabled=false;btn.textContent='Save Changes';if(d?.success){aEl.className='alert ag';aEl.textContent='✓ Profile updated.';ST.user={...ST.user,...d.data.user};buildSidebar();}else{aEl.className='alert ar';aEl.textContent=d?.message||'Failed';}aEl.style.display='block';}
+async function changePass(){const old=document.getElementById('cp-o').value,nw=document.getElementById('cp-n').value,nw2=document.getElementById('cp-n2').value,aEl=document.getElementById('cp-al'),btn=document.getElementById('cp-btn');aEl.style.display='none';if(nw!==nw2){aEl.className='alert ar';aEl.textContent='Passwords do not match';aEl.style.display='block';return;}btn.disabled=true;btn.innerHTML='<span class="spin"></span>';const d=await api('POST','/auth/change-password',{current_password:old,new_password:nw});btn.disabled=false;btn.textContent='Update Password';aEl.className=d?.success?'alert ag':'alert ar';aEl.textContent=d?.message||(d?.success?'Password changed! Confirmation email sent.':'Failed');aEl.style.display='block';}
+async function setup2FA(){const d=await api('POST','/auth/setup-2fa');if(!d?.success){toast('Failed','error');return;}document.getElementById('tfa-area').innerHTML=`<div class="modal-wrap" onclick="if(event.target===this)this.innerHTML=''"><div class="modal"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem"><div><h2 style="font-size:20px">Setup 2FA</h2><p style="font-size:13px;color:var(--ink3)">Two-factor authentication</p></div><button onclick="document.getElementById('tfa-area').innerHTML=''" style="border:none;background:none;font-size:24px;color:var(--ink3)">×</button></div><p style="font-size:13px;color:var(--ink2);margin-bottom:1rem">Scan with Google Authenticator or Authy:</p><div style="text-align:center;margin-bottom:1rem"><img src="${d.data.qrCode}" style="width:180px;height:180px;border-radius:12px;border:2px solid var(--bdr)"/></div><div style="background:var(--sur3);border-radius:10px;padding:10px;margin-bottom:1rem;text-align:center"><p style="font-size:11px;color:var(--ink3);margin-bottom:4px">Manual key</p><p class="mono" style="font-size:12px;word-break:break-all">${d.data.secret}</p></div><div class="fg"><label class="fl">Enter 6-digit code</label><input id="tfa-t" type="text" placeholder="000000" maxlength="6" style="text-align:center;font-size:24px;letter-spacing:10px;font-family:'JetBrains Mono',monospace"/></div><div id="tfa-a" style="display:none"></div><button class="btn" onclick="verify2FA()" style="width:100%;padding:12px">Verify &amp; Enable →</button></div></div>`;}
+async function verify2FA(){const token=document.getElementById('tfa-t').value,d=await api('POST','/auth/enable-2fa',{token}),aEl=document.getElementById('tfa-a');if(d?.success){document.getElementById('tfa-area').innerHTML='';toast('2FA enabled!');PG.settings();}else{aEl.className='alert ar';aEl.textContent=d?.message||'Invalid code';aEl.style.display='block';}}
+
+// ── DEPOSIT (bank staff) ───────────────────────────────────────
+PG.deposit=async()=>{
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Process Deposit</h1><p style="color:var(--ink3);font-size:13px">Credit customer accounts</p></div></div>
+  <div class="card" style="max-width:520px">
+    <div class="fg"><label class="fl">Customer Account Number</label><div style="display:flex;gap:8px"><input id="dp-a" placeholder="e.g. 1000000001" style="flex:1"/><button onclick="lookupAcc()">Lookup →</button></div><div id="dp-i" style="font-size:12.5px;margin-top:5px"></div></div>
+    <div class="fg"><label class="fl">Amount (RWF)</label><input id="dp-amt" type="number" min="100" placeholder="Enter deposit amount"/></div>
+    <div class="fg"><label class="fl">Description</label><input id="dp-desc" placeholder="Cash deposit"/></div>
+    <div id="dp-al" style="display:none"></div>
+    <button class="btn" onclick="doDeposit()" style="width:100%;padding:12px" id="dp-btn">Process Deposit →</button>
+  </div>`);
+};
+async function lookupAcc(){const num=document.getElementById('dp-a').value.trim(),el=document.getElementById('dp-i');if(!num){el.innerHTML='';return;}el.innerHTML='<span class="spin"></span>';const d=await api('GET',`/accounts/verify?account_number=${encodeURIComponent(num)}`);if(d?.success)el.innerHTML=`<span style="color:var(--teal);font-weight:500">✓ ${d.data.account.account_name} — ${d.data.account.account_type}</span>`;else el.innerHTML=`<span style="color:var(--red)">✗ ${d?.message||'Not found'}</span>`;}
+async function doDeposit(){const accNum=document.getElementById('dp-a').value.trim(),amount=parseFloat(document.getElementById('dp-amt').value)||0,desc=document.getElementById('dp-desc').value||'Cash deposit',aEl=document.getElementById('dp-al'),btn=document.getElementById('dp-btn');aEl.style.display='none';if(!accNum||amount<100){aEl.className='alert ar';aEl.textContent='Account number and amount (min 100) required';aEl.style.display='block';return;}btn.disabled=true;btn.innerHTML='<span class="spin"></span> Processing...';const d=await api('POST','/transactions/deposit',{account_number:accNum,amount,description:desc});btn.disabled=false;btn.innerHTML='Process Deposit →';if(!d?.success){aEl.className='alert ar';aEl.textContent=d?.message||'Failed';aEl.style.display='block';return;}aEl.className='alert ag';aEl.innerHTML=`✓ ${fmt(amount)} RWF deposited. Ref: <strong class="mono">${d.data.transaction.reference}</strong>. Email sent to account holder.`;aEl.style.display='block';document.getElementById('dp-amt').value='';document.getElementById('dp-a').value='';document.getElementById('dp-i').innerHTML='';}
+
+// ── CUSTOMERS / USERS ─────────────────────────────────────────
+PG.customers=async()=>{
+  load();const isA=['super_admin','branch_manager'].includes(ST.user?.role);const d=await api('GET','/admin/users');const users=d?.data?.users||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Users &amp; Staff</h1><p style="color:var(--ink3);font-size:13px">${users.length} total</p></div>${ST.user?.role==='super_admin'?`<button class="btn" onclick="showCreateStaff()">+ Add Staff</button>`:''}</div>
+  <div class="card" style="margin-bottom:1rem;display:flex;gap:10px;align-items:center">
+    <input id="u-s" placeholder="Search by name or email..." oninput="fUsers()" style="max-width:300px"/>
+    <select id="u-r" onchange="fUsers()" style="width:160px"><option value="">All Roles</option><option value="customer">Customer</option><option value="bank_staff">Bank Staff</option><option value="branch_manager">Manager</option><option value="fraud_analyst">Fraud Analyst</option><option value="auditor">Auditor</option></select>
+    <span id="u-cnt" class="metric">${users.length} users</span>
+  </div>
+  <div class="card" style="overflow:auto"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Branch</th><th>Status</th><th>KYC</th><th>Last Login</th>${isA?'<th>Actions</th>':''}</tr></thead><tbody id="u-tbody">${uRows(users,isA)}</tbody></table></div>
+  <div id="staff-ma"></div>`);window._users=users;
+};
+window.fUsers=function(){const q=(document.getElementById('u-s')||{}).value?.toLowerCase()||'',r=(document.getElementById('u-r')||{}).value||'',isA=['super_admin','branch_manager'].includes(ST.user?.role);let f=(window._users||[]).filter(u=>`${u.first_name} ${u.last_name} ${u.email}`.toLowerCase().includes(q));if(r)f=f.filter(u=>u.role===r);const b=document.getElementById('u-tbody');if(b)b.innerHTML=uRows(f,isA);const c=document.getElementById('u-cnt');if(c)c.textContent=f.length+' users';};
+function uRows(users,isA){return users.map(u=>{const r=RL[u.role]||RL.customer;return`<tr><td style="font-weight:600;font-size:13px">${u.first_name} ${u.last_name}</td><td style="font-size:12.5px;color:var(--ink3)">${u.email}</td><td><span class="badge" style="background:${r.c}22;color:${r.c}">${r.l}</span></td><td style="font-size:12.5px;color:var(--ink3)">${u.branch_name||'—'}</td><td><span class="badge ${u.status==='active'?'bg':'br'}">${u.status}</span></td><td><span class="badge ${u.kyc_verified?'bt':'ba'}">${u.kyc_verified?'✓ Verified':'Pending'}</span></td><td style="font-size:11.5px;color:var(--ink3)">${u.last_login_at?new Date(u.last_login_at).toLocaleDateString():''}</td>${isA?`<td style="white-space:nowrap"><button onclick="togUser('${u.id}','${u.status==='active'?'suspended':'active'}')" class="btn-sm" style="font-size:11px;color:${u.status==='active'?'var(--red)':'var(--teal)'};border-color:currentColor;padding:3px 8px">${u.status==='active'?'Suspend':'Activate'}</button>${!u.kyc_verified?`<button onclick="kycV('${u.id}',true)" class="btn-sm" style="font-size:11px;margin-left:4px;padding:3px 8px">KYC ✓</button>`:''}</td>`:''}</tr>`;}).join('');}
+window.togUser=async function(id,s){const d=await api('PUT',`/admin/users/${id}/status`,{status:s});if(d?.success){toast('User '+s);PG.customers();}else toast(d?.message||'Failed','error');};
+window.kycV=async function(id,v){const d=await api('PUT',`/admin/users/${id}/kyc`,{verified:v});if(d?.success){toast('KYC updated');PG.customers();}else toast(d?.message||'Failed','error');};
+window.showCreateStaff=function(){document.getElementById('staff-ma').innerHTML=`<div class="modal-wrap" onclick="if(event.target===this)this.innerHTML=''"><div class="modal"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem"><div><h2 style="font-size:18px">Add Staff Member</h2><p style="font-size:13px;color:var(--ink3)">A login email will be sent to the staff</p></div><button onclick="document.getElementById('staff-ma').innerHTML=''" style="border:none;background:none;font-size:24px">×</button></div><div class="fr"><div class="fg"><label class="fl">First Name</label><input id="ns-f"/></div><div class="fg"><label class="fl">Last Name</label><input id="ns-l"/></div></div><div class="fg"><label class="fl">Email</label><input id="ns-e" type="email"/></div><div class="fg"><label class="fl">Phone</label><input id="ns-p"/></div><div class="fg"><label class="fl">Role</label><select id="ns-r"><option value="bank_staff">Bank Staff / Teller</option><option value="branch_manager">Branch Manager</option><option value="fraud_analyst">Fraud Analyst</option><option value="auditor">Auditor</option></select></div><div class="fg"><label class="fl">Temporary Password</label><input id="ns-pw" type="password" placeholder="Min 8 characters"/></div><div id="ns-al" style="display:none"></div><button class="btn" onclick="createStaff()" style="width:100%" id="ns-btn">Create Staff Account →</button></div></div>`;};
+window.createStaff=async function(){const btn=document.getElementById('ns-btn'),aEl=document.getElementById('ns-al');aEl.style.display='none';btn.disabled=true;btn.innerHTML='<span class="spin"></span>';const d=await api('POST','/admin/staff',{first_name:document.getElementById('ns-f').value,last_name:document.getElementById('ns-l').value,email:document.getElementById('ns-e').value,phone:document.getElementById('ns-p').value,role:document.getElementById('ns-r').value,password:document.getElementById('ns-pw').value});btn.disabled=false;btn.textContent='Create Staff Account →';if(d?.success){document.getElementById('staff-ma').innerHTML='';toast('Staff account created! Welcome email sent.');PG.customers();}else{aEl.className='alert ar';aEl.textContent=d?.message||'Failed';aEl.style.display='block';}};
+
+// ── ADMIN DASHBOARD ────────────────────────────────────────────
+PG.admin=async()=>{
+  load();const[st,fr]=await Promise.all([api('GET','/admin/dashboard'),api('GET','/fraud/stats')]);const s=st?.data||{},fs=fr?.data||{};
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Admin Dashboard</h1><p style="color:var(--ink3);font-size:13px">${new Date().toLocaleDateString('en-RW',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p></div><span class="badge bg" style="padding:6px 14px">● System Online</span></div>
+  <div class="g4" style="margin-bottom:1.5rem">
+    <div class="scard" style="background:linear-gradient(135deg,var(--ink),#1a2440)"><div style="font-size:10.5px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Total Customers</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif;color:#fff;letter-spacing:-.04em">${s.customers?.total||0}</div><div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:4px">+${s.customers?.new_month||0} this month</div></div>
+    <div class="scard"><div style="font-size:10.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Transactions (30d)</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.04em">${s.transactions?.total||0}</div><div style="font-size:12px;color:var(--ink3);margin-top:4px">${fmt(s.transactions?.volume||0)} RWF volume</div></div>
+    <div class="scard" style="background:#fff5f5;border-color:#fecaca"><div style="font-size:10.5px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Open Fraud Cases</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif;color:var(--red);letter-spacing:-.04em">${s.fraud?.open||0}</div><div style="font-size:12px;color:var(--red);opacity:.6;margin-top:4px">${s.transactions?.flagged||0} flagged txns</div></div>
+    <div class="scard" style="background:var(--amber3);border-color:#fde68a"><div style="font-size:10.5px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Pending Loans</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif;color:var(--amber);letter-spacing:-.04em">${s.loans?.pending||0}</div><div style="font-size:12px;color:var(--amber);opacity:.7;margin-top:4px">awaiting review</div></div>
+  </div>
+  <div class="g2" style="margin-bottom:1.25rem">
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Fraud Cases by Status</h3>${(fs.by_status||[]).length===0?'<p style="color:var(--ink3)">No fraud cases.</p>':(fs.by_status||[]).map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--sur3);border-radius:10px;margin-bottom:6px"><span style="font-size:13px;text-transform:capitalize;font-weight:500">${(s.status||'').replace(/_/g,' ')}</span><span class="badge ${s.status==='open'?'br':s.status.includes('resolved')?'bg':'ba'}">${s.count}</span></div>`).join('')}</div>
+    <div class="card"><h3 style="margin-bottom:1rem;font-size:14px">Quick Navigation</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['customers','♠','Manage Users'],['fraud','⚠','Fraud Center'],['loans-admin','◆','Review Loans'],['branches','⊞','Branches'],['audit','≡','Audit Logs'],['reports','📋','Reports']].map(([p,i,l])=>`<button onclick="navTo('${p}')" style="text-align:left;padding:11px 13px;display:flex;align-items:center;gap:8px;border-radius:11px;font-size:13px;background:var(--sur3);border-color:var(--bdr)">${i} ${l}</button>`).join('')}</div></div>
+  </div>`);
+};
+
+// ── LOANS ADMIN ────────────────────────────────────────────────
+PG['loans-admin']=async()=>{
+  load();const d=await api('GET','/loans/all?limit=50');const loans=d?.data?.loans||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Loan Management</h1><p style="color:var(--ink3);font-size:13px">${loans.length} applications</p></div></div>
+  <div style="display:flex;gap:6px;margin-bottom:1rem">${['All','applied','approved','rejected'].map((s,i)=>`<button id="lt-${s}" onclick="fLoans('${s}')" class="${i===0?'btn btn-sm':'btn-sm'}">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}</div>
+  <div class="card" style="overflow:auto"><table><thead><tr><th>Customer</th><th>Type</th><th>Amount</th><th>Duration</th><th>Monthly</th><th>AI Score</th><th>Risk</th><th>Status</th><th>Actions</th></tr></thead><tbody id="la-body">${loanAdminRows(loans)}</tbody></table></div>`);
+  window._aLoans=loans;
+};
+window.fLoans=function(s){document.querySelectorAll('[id^="lt-"]').forEach(el=>el.className='btn-sm');const b=document.getElementById('lt-'+s);if(b)b.className='btn btn-sm';const f=s==='All'?window._aLoans:(window._aLoans||[]).filter(l=>l.status===s);const body=document.getElementById('la-body');if(body)body.innerHTML=loanAdminRows(f);};
+function loanAdminRows(loans){return loans.map(l=>`<tr><td><p style="font-weight:600;font-size:13px">${l.customer_name||'—'}</p><p style="font-size:11px;color:var(--ink3)">${l.email||'—'}</p></td><td style="text-transform:capitalize;font-weight:500">${l.loan_type}</td><td class="mono">${fmt(l.principal_amount)} RWF</td><td>${l.duration_months} mo.</td><td class="mono">${fmt(l.monthly_payment)} RWF</td><td style="font-weight:700;color:${parseFloat(l.ai_credit_score)>=700?'var(--teal)':parseFloat(l.ai_credit_score)>=550?'var(--amber)':'var(--red)'}">${l.ai_credit_score||'—'}</td><td><span class="badge ${l.ai_risk_level==='low'?'bg':l.ai_risk_level==='high'?'br':'ba'}">${l.ai_risk_level||'—'}</span></td><td><span class="badge ${l.status==='approved'?'bg':l.status==='rejected'?'br':l.status==='applied'?'bb':'ba'}" style="text-transform:capitalize">${l.status}</span></td><td style="white-space:nowrap">${l.status==='applied'?`<button onclick="revLoan('${l.id}','approved')" class="btn-success btn-sm" style="font-size:11px;padding:3px 8px;margin-right:4px">✓ Approve</button><button onclick="revLoan('${l.id}','rejected')" class="btn-danger btn-sm" style="font-size:11px;padding:3px 8px">✗ Reject</button>`:`<span style="font-size:12px;color:var(--ink3)">${l.status}</span>`}</td></tr>`).join('');}
+window.revLoan=async function(id,s){const notes=s==='rejected'?prompt('Reason for rejection (optional):'):undefined;const d=await api('PUT',`/loans/${id}/review`,{status:s,notes});if(d?.success){toast('Loan '+s+'. Email sent to customer.');PG['loans-admin']();}else toast(d?.message||'Failed','error');};
+
+// ── FRAUD CENTER ──────────────────────────────────────────────
+PG.fraud=async()=>{
+  load();const[cases,txns]=await Promise.all([api('GET','/fraud/cases?limit=50'),api('GET','/transactions/all?is_flagged=true&limit=50')]);
+  const fc=cases?.data?.cases||[],ft=txns?.data?.transactions||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Fraud Detection Center</h1><p style="color:var(--ink3);font-size:13px">AI-powered monitoring</p></div></div>
+  <div class="g4" style="margin-bottom:1.5rem">
+    <div class="scard" style="background:#fff5f5;border-color:#fecaca"><div style="font-size:10.5px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Open Cases</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif;color:var(--red)">${fc.filter(f=>f.status==='open').length}</div></div>
+    <div class="scard"><div style="font-size:10.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Flagged Txns</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif">${ft.length}</div></div>
+    <div class="scard" style="background:#f0fdf4;border-color:#bbf7d0"><div style="font-size:10.5px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Resolved</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif;color:var(--teal)">${fc.filter(f=>f.status!=='open').length}</div></div>
+    <div class="scard"><div style="font-size:10.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Avg AI Score</div><div style="font-size:32px;font-weight:800;font-family:'Syne',sans-serif">${fc.length?((fc.reduce((s,f)=>s+parseFloat(f.ai_score||0),0)/fc.length)*100).toFixed(0)+'%':'—'}</div></div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem;overflow:auto"><h3 style="margin-bottom:1rem;font-size:14px">Fraud Cases</h3>
+    ${fc.length===0?'<p style="color:var(--ink3);padding:1rem;text-align:center">No fraud cases.</p>':`<table><thead><tr><th>Customer</th><th>Account</th><th>Amount</th><th>AI Score</th><th>Severity</th><th>Status</th><th>Reason</th><th>Actions</th></tr></thead><tbody>${fc.map(f=>`<tr><td style="font-weight:600;font-size:13px">${f.customer_name||'—'}</td><td class="mono" style="font-size:11.5px">${f.account_number||'—'}</td><td class="mono">${fmt(f.amount||0)} RWF</td><td style="font-weight:700;color:${parseFloat(f.ai_score)>.7?'var(--red)':'var(--amber)'}">${f.ai_score!=null?(parseFloat(f.ai_score)*100).toFixed(0)+'%':'—'}</td><td><span class="badge ${f.severity==='high'||f.severity==='critical'?'br':'ba'}">${f.severity}</span></td><td><span class="badge ${f.status==='open'?'br':f.status.includes('resolved')?'bg':'ba'}" style="text-transform:capitalize">${f.status.replace(/_/g,' ')}</span></td><td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${(f.ai_reason||[]).join(', ')}">${(f.ai_reason||[]).slice(0,2).join(', ')||'—'}</td><td style="white-space:nowrap">${f.status==='open'?`<button onclick="resCase('${f.id}','resolved_fraud')" class="btn-danger btn-sm" style="font-size:11px;padding:3px 8px;margin-right:4px">Fraud</button><button onclick="resCase('${f.id}','resolved_false_positive')" class="btn-success btn-sm" style="font-size:11px;padding:3px 8px;margin-right:4px">Clear</button>${f.account_id?`<button onclick="frzAcct('${f.account_id}')" class="btn-sm" style="font-size:11px;padding:3px 8px;color:var(--red);border-color:var(--red)">Freeze</button>`:''}`:`<span style="font-size:11px;color:var(--ink3)">${f.status.replace(/_/g,' ')}</span>`}</td></tr>`).join('')}</tbody></table>`}
+  </div>
+  <div class="card" style="overflow:auto"><h3 style="margin-bottom:1rem;font-size:14px">Flagged Transactions</h3>
+    ${ft.length===0?'<p style="color:var(--ink3);padding:1rem;text-align:center">No flagged transactions.</p>':`<table><thead><tr><th>Reference</th><th>From</th><th>To</th><th>Amount</th><th>Score</th><th>Date</th></tr></thead><tbody>${ft.map(t=>`<tr><td class="mono" style="font-size:11.5px">${t.reference}</td><td style="font-size:12.5px">${t.sender_name||'—'}</td><td style="font-size:12.5px">${t.receiver_name||'—'}</td><td class="mono" style="font-weight:600">${fmt(t.amount)} RWF</td><td style="font-weight:700;color:var(--red)">${t.fraud_score!=null?(t.fraud_score*100).toFixed(0)+'%':'—'}</td><td style="font-size:11.5px;color:var(--ink3)">${t.created_at?new Date(t.created_at).toLocaleDateString():''}</td></tr>`).join('')}</tbody></table>`}
+  </div>`);
+};
+window.resCase=async function(id,s){const notes=s==='resolved_fraud'?prompt('Notes (optional):'):undefined;const d=await api('PUT',`/fraud/cases/${id}`,{status:s,resolution_notes:notes});if(d?.success){toast('Case updated');PG.fraud();}else toast(d?.message||'Failed','error');};
+window.frzAcct=async function(id){if(!confirm('Freeze this account?'))return;const d=await api('POST','/fraud/freeze',{account_id:id,reason:'Fraud investigation'});if(d?.success)toast('Account frozen');else toast(d?.message||'Failed','error');};
+
+// ── BRANCHES ──────────────────────────────────────────────────
+PG.branches=async()=>{
+  load();const d=await api('GET','/branches');const branches=d?.data?.branches||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Branch Management</h1><p style="color:var(--ink3);font-size:13px">${branches.length} branches</p></div>${ST.user?.role==='super_admin'?`<button class="btn" onclick="showAddBranch()">+ Add Branch</button>`:''}</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">${branches.map(b=>`<div class="card"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:14px"><div><p style="font-weight:700;font-size:16px;font-family:'Syne',sans-serif">${b.name}</p><p class="mono" style="font-size:11px;color:var(--ink3);margin-top:2px">${b.code}</p></div><span class="badge ${b.is_active?'bg':'br'}">${b.is_active?'Active':'Inactive'}</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['📍 Location',b.location||'—'],['👥 Staff',b.staff_count||0],['🏦 Accounts',b.account_count||0],['📞 Phone',b.phone||'—']].map(([k,v])=>`<div style="padding:9px 11px;background:var(--sur3);border-radius:9px"><p style="font-size:11px;color:var(--ink3)">${k}</p><p style="font-size:13px;font-weight:600;margin-top:2px">${v}</p></div>`).join('')}</div></div>`).join('')}</div>
+  <div id="branch-ma"></div>`);
+};
+function showAddBranch(){document.getElementById('branch-ma').innerHTML=`<div class="modal-wrap" onclick="if(event.target===this)this.innerHTML=''"><div class="modal"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem"><div><h2 style="font-size:18px">Add Branch</h2></div><button onclick="document.getElementById('branch-ma').innerHTML=''" style="border:none;background:none;font-size:24px">×</button></div><div class="fg"><label class="fl">Branch Name</label><input id="nb-n" placeholder="Kigali City Branch"/></div><div class="fg"><label class="fl">Branch Code</label><input id="nb-c" placeholder="KGL002"/></div><div class="fg"><label class="fl">Location</label><input id="nb-l" placeholder="Kigali, Rwanda"/></div><div class="fg"><label class="fl">Address</label><input id="nb-a" placeholder="Street address"/></div><div class="fr"><div class="fg"><label class="fl">Phone</label><input id="nb-ph" placeholder="+250788..."/></div><div class="fg"><label class="fl">Email</label><input id="nb-e" type="email" placeholder="branch@smartbank.rw"/></div></div><div id="nb-al" style="display:none"></div><button class="btn" onclick="addBranch()" style="width:100%">Create Branch →</button></div></div>`;}
+async function addBranch(){const name=document.getElementById('nb-n').value.trim(),code=document.getElementById('nb-c').value.trim().toUpperCase(),loc=document.getElementById('nb-l').value.trim(),aEl=document.getElementById('nb-al');if(!name||!code||!loc){aEl.className='alert ar';aEl.textContent='Name, code and location required';aEl.style.display='block';return;}const d=await api('POST','/branches',{name,code,location:loc,address:document.getElementById('nb-a').value,phone:document.getElementById('nb-ph').value,email:document.getElementById('nb-e').value});if(d?.success){document.getElementById('branch-ma').innerHTML='';toast('Branch created');PG.branches();}else{aEl.className='alert ar';aEl.textContent=d?.message||'Failed';aEl.style.display='block';}}
+
+// ── AUDIT LOGS ────────────────────────────────────────────────
+PG.audit=async()=>{
+  load();const d=await api('GET','/audit-logs?limit=50');const logs=d?.data?.logs||[];
+  setC(`<div class="topbar"><div><h1 style="font-size:23px">Audit Logs</h1><p style="color:var(--ink3);font-size:13px">Tamper-proof activity records</p></div></div>
+  <div class="card" style="overflow:auto">${logs.length===0?'<p style="color:var(--ink3);padding:1.5rem;text-align:center">No audit logs.</p>':`<table><thead><tr><th>User</th><th>Role</th><th>Action</th><th>Entity</th><th>IP</th><th>Time</th></tr></thead><tbody>${logs.map(l=>`<tr><td><p style="font-size:13px;font-weight:600">${l.user_name||'System'}</p><p style="font-size:11px;color:var(--ink3)">${l.user_email||''}</p></td><td><span class="badge bgr" style="font-size:10px;text-transform:capitalize">${(l.user_role||'—').replace(/_/g,' ')}</span></td><td><span class="badge bb">${l.action}</span></td><td style="font-size:12.5px;color:var(--ink3)">${l.entity||'—'}</td><td class="mono" style="font-size:11.5px;color:var(--ink3)">${l.ip_address||'—'}</td><td style="font-size:11.5px;color:var(--ink3)">${l.created_at?new Date(l.created_at).toLocaleString():''}</td></tr>`).join('')}</tbody></table>`}</div>`);
+};
+</script></body></html>
