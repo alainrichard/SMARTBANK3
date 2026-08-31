@@ -65,3 +65,30 @@ npm run dev
 - Reports: Excel, PDF, Word export
 - GPS location detection
 - Role-based access control
+
+## CI / Automated builds
+
+This repository includes a GitHub Actions workflow that builds the Next.js frontend and installs backend dependencies on push/PR. The workflow file is at `.github/workflows/ci.yml`.
+
+## Docker / Local development
+
+Preferred local setup uses Docker Compose (Postgres + backend + ai). If Docker Desktop is installed, run:
+
+```powershell
+cd "d:\my projects\smartbank3"
+docker compose up -d postgres
+```
+
+If you prefer to run Postgres locally and apply the schema manually, use the helper scripts in `scripts/`:
+
+PowerShell:
+```powershell
+./scripts/apply_schema.ps1 -Host localhost -Port 5432 -User postgres -Database smartbank_db -File database/schema.sql
+```
+
+POSIX:
+```bash
+./scripts/apply_schema.sh localhost 5432 postgres smartbank_db database/schema.sql
+```
+
+Note: Do not commit build artifacts (frontend `.next`) — they are removed from history and ignored by `.gitignore`.

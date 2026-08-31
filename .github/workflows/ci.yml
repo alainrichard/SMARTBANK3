@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, fix/smartbank3 ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  frontend-build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend-nextjs
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend-nextjs
+
+  backend-deps:
+    name: Install backend dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
