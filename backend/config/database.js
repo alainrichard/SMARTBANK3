@@ -20,20 +20,31 @@ const pool = new Pool({
 
 pool.on('error', err => console.error('[DB Pool]', err.message));
 
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error('\n[SmartBank] DB connection FAILED:', err.message);
-    if (err.message.includes('password') || err.message.includes('SCRAM'))
-      console.error('Fix: Check DB_PASSWORD in backend/.env\n');
-    else if (err.message.includes('does not exist'))
-      console.error('Fix: Run schema first: psql -U postgres -d smartbank_db -f database/schema.sql\n');
-    else if (err.message.includes('ECONNREFUSED'))
-      console.error('Fix: Start PostgreSQL service.\n');
-    return;
+// Try a light test query with retries so the server can start before DB is ready.
+const tryConnect = async (attempts = 10, delayMs = 3000) => {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await pool.query('SELECT 1');
+      console.log('[SmartBank] Connected to DB:', process.env.DB_NAME || 'smartbank_db');
+      return;
+    } catch (err) {
+      console.error(`[SmartBank] DB connection attempt ${i}/${attempts} failed:`, err.message);
+      if (i === attempts) {
+        if (err.message && (err.message.includes('password') || err.message.includes('SCRAM')))
+          console.error('Fix: Check DB_PASSWORD in backend/.env\n');
+        else if (err.message && err.message.includes('does not exist'))
+          console.error('Fix: Run schema first: psql -U postgres -d smartbank_db -f database/schema.sql\n');
+        else if (err.message && err.message.includes('ECONNREFUSED'))
+          console.error('Fix: Start PostgreSQL service.\n');
+        console.error('[SmartBank] Giving up connecting to DB for now.');
+      } else {
+        await new Promise(r => setTimeout(r, delayMs));
+      }
+    }
   }
-  release();
-  console.log('[SmartBank] Connected to DB:', process.env.DB_NAME || 'smartbank_db');
-});
+};
+
+tryConnect();
 
 module.exports = {
   query: (text, params) => pool.query(text, params),
