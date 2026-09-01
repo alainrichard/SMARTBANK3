@@ -33,6 +33,7 @@ try:
 except ImportError as e:
     ML = False
     np = None
+    joblib = None
     print(f"[AI] scikit-learn unavailable ({e}) - using rule-based fallback")
 
 try:
@@ -45,6 +46,23 @@ except ImportError:
     print("[AI] TensorFlow not installed (optional)")
 
 _fm = _fs = _cm = _cs = _am = None   # fraud/credit/anomaly model + scaler
+
+def safe_load(path):
+    """Attempt to load a joblib model; on failure log and return None."""
+    global joblib
+    if not joblib:
+        return None
+    try:
+        return joblib.load(path)
+    except Exception as e:
+        print(f"[AI] Failed to load model {path}: {e}")
+        try:
+            # remove corrupted file so retrain can proceed
+            os.remove(path)
+            print(f"[AI] Removed corrupted model file: {path}")
+        except Exception:
+            pass
+        return None
 
 def get_db():
     import psycopg2
@@ -91,7 +109,9 @@ def train_fraud():
     if not ML: return
     mp, sp = os.path.join(MODEL_DIR, 'fm.pkl'), os.path.join(MODEL_DIR, 'fs.pkl')
     if os.path.exists(mp):
-        _fm = joblib.load(mp); _fs = joblib.load(sp); print("[AI] Fraud model loaded"); return
+        _fm = safe_load(mp); _fs = safe_load(sp)
+        if _fm is not None and _fs is not None:
+            print("[AI] Fraud model loaded"); return
     rng = random.Random(42); X, y = [], []
     for _ in range(3000):
         fraud = rng.random() < 0.15
@@ -140,7 +160,9 @@ def train_credit():
     if not ML: return
     mp, sp = os.path.join(MODEL_DIR, 'cm.pkl'), os.path.join(MODEL_DIR, 'cs.pkl')
     if os.path.exists(mp):
-        _cm = joblib.load(mp); _cs = joblib.load(sp); print("[AI] Credit model loaded"); return
+        _cm = safe_load(mp); _cs = safe_load(sp)
+        if _cm is not None and _cs is not None:
+            print("[AI] Credit model loaded"); return
     rng = random.Random(123); X, y = [], []
     for _ in range(2000):
         n = rng.randint(0,200); b = rng.uniform(0,10000000); dep = rng.uniform(0,5000000)
@@ -334,9 +356,18 @@ if __name__ == '__main__':
     print(f"[SmartBank AI] scikit-learn: {'OK' if ML else 'not installed'}")
     print(f"[SmartBank AI] TensorFlow:   {'OK' if TF else 'not installed'}")
     if ML:
-        train_fraud()
-        train_credit()
-        train_anomaly()
+        try:
+            train_fraud()
+        except Exception as e:
+            print(f"[AI] train_fraud failed: {e}")
+        try:
+            train_credit()
+        except Exception as e:
+            print(f"[AI] train_credit failed: {e}")
+        try:
+            train_anomaly()
+        except Exception as e:
+            print(f"[AI] train_anomaly failed: {e}")
     port = int(os.getenv('AI_PORT', 8000))
     print(f"[SmartBank AI] Running on http://localhost:{port}\n")
     app.run(host='0.0.0.0', port=port, debug=os.getenv('FLASK_ENV') == 'development')
