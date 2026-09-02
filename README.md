@@ -14,6 +14,9 @@ psql -U postgres -c "CREATE DATABASE smartbank_db;"
 psql -U postgres -d smartbank_db -f database/schema.sql
 ```
 
+Alternatively you can provide a single `DATABASE_URL` environment variable (for hosted Postgres) and optionally enable SSL via `DB_SSL=true` in `backend/.env`.
+
+
 ### 2. Backend
 ```bash
 cd backend
