@@ -1,0 +1,40 @@
+name: CI & Build
+
+on:
+  push:
+    branches: [ main, fix/smartbank3 ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Build frontend
+        working-directory: frontend-nextjs
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build backend image
+        run: |
+          docker build -f backend/Dockerfile -t ghcr.io/${{ github.repository_owner }}/smartbank3-backend:ci backend
+
+      - name: Build AI image (best-effort)
+        run: |
+          docker build -f ai/Dockerfile -t ghcr.io/${{ github.repository_owner }}/smartbank3-ai:ci ai || echo "AI image build failed; continuing"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-info
+          path: |
+            frontend-nextjs/.next || true
+            backend/package.json

@@ -9,14 +9,26 @@ if (pw === undefined) {
   process.exit(1);
 }
 
-const pool = new Pool({
-  host:     process.env.DB_HOST || 'localhost',
-  port:     parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'smartbank_db',
-  user:     process.env.DB_USER || 'postgres',
-  password: String(pw),
-  max: 20, idleTimeoutMillis: 30000, connectionTimeoutMillis: 5000, ssl: false,
-});
+const connectionString = process.env.DATABASE_URL || null;
+const sslEnabled = String(process.env.DB_SSL || 'false').toLowerCase() === 'true';
+
+const poolOptions = connectionString
+  ? { connectionString }
+  : {
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      database: process.env.DB_NAME || 'smartbank_db',
+      user: process.env.DB_USER || 'postgres',
+      password: String(pw),
+    };
+
+// Attach common pool settings and SSL if requested
+const pool = new Pool(Object.assign({}, poolOptions, {
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+  ssl: sslEnabled ? { rejectUnauthorized: false } : false,
+}));
 
 pool.on('error', err => console.error('[DB Pool]', err.message));
 
